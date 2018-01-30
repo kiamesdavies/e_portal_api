@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.portal</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../parent</relativePath>
+    </parent>
+    <artifactId>entities</artifactId>
+    <packaging>jar</packaging>
+    <profiles>
+        <profile>
+            <id>generateQueryDsl</id>
+            <activation>
+                <property>
+                    <name>!generateAdminModels</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mysema.maven</groupId>
+                        <artifactId>apt-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>de.empulse.eclipselink</groupId>
+                        <artifactId>staticweave-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generateAdminModels</id>
+            <activation>
+                <property>
+                    <name>generateAdminModels</name>
+                </property>
+            </activation>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.mapstruct</groupId>
+                                    <artifactId>mapstruct-processor</artifactId>
+                                    <version>${org.mapstruct.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>com.encentral.tattara</groupId>
+                                    <artifactId>processor</artifactId>
+                                    <version>0.0.1-SNAPSHPOT</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <annotationProcessors>
+                                <annotationProcessor>
+                                    com.encentral.tattara.ap.DirtyEntityProcessor
+                                </annotationProcessor>
+
+                            </annotationProcessors>
+                    
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4.1209.jre7</version>
+        </dependency>
+
+    </dependencies>
+</project>

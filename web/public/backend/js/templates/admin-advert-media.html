@@ -1,0 +1,67 @@
+
+    <td class="text-center">
+        <%= index %>
+    </td>
+    <td>
+        <%= name %>
+    </td>
+    <td>
+        <%= description %>
+    </td>
+    <td>
+        <%= endDate %>
+    </td>
+    <td class="text-right">
+        <% if (status == "STOPPED") { %>
+            <span class="label label-danger">Stopped</span>
+            <% } else if (status == "STARTED") { %>
+                <span class="label label-success">Started</span>
+                <% } else {%>
+                    <span class="label label-info">Pending Approval</span>
+                    <% } %>
+    </td>
+    <td class="td-actions text-right">
+        <button type="button" class="btn btn-default btn-round view" rel="tooltip" data-placement="bottom" title="" data-original-title="View">
+            <i class="material-icons">play_arrow</i>
+        </button>
+        <% if (status == "STOPPED") { %>
+            <button type="button" class="btn btn-success btn-round start" rel="tooltip" data-placement="bottom" title="" data-original-title="Start">
+                <i class="material-icons">done</i>
+            </button>
+            <% } else if (status == "STARTED") { %>
+                <button type="button" class="btn btn-warning btn-round stop" rel="tooltip" data-placement="bottom" title="" data-original-title="Stop">
+                    <i class="material-icons">stop</i>
+                </button>
+                <% } else {%>
+                <button type="button" class="btn btn-success btn-round start" rel="tooltip" data-placement="bottom" title="" data-original-title="Approve and Start">
+                        <i class="material-icons">done</i>
+                 </button>
+                    <% }%>
+
+                        <button type="button" class="btn btn-danger btn-round remove" rel="tooltip" data-placement="bottom" title="" data-original-title="Remove">
+                            <i class="material-icons">close</i>
+                        </button>
+                        <div class="modal fade player-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            <i class="material-icons">clear</i>
+                                        </button>
+                                        <h4 class="modal-title">
+                                            <%= name %>
+                                        </h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-sm-10 col-sm-offset-1">
+                                                <div id="player-<%= mediaId %>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+    </td>

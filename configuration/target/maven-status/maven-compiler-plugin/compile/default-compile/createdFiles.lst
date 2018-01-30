@@ -1,0 +1,8 @@
+com/portal/configuration/repository/ConfigRepository.class
+com/portal/configuration/IConfiguration$Config.class
+com/portal/configuration/IMessageTemplate$MessageType.class
+com/portal/configuration/MessageParamHolders.class
+com/portal/configuration/impl/ConfigurationImpl.class
+com/portal/configuration/impl/MessageTemplateImpl.class
+com/portal/configuration/IMessageTemplate.class
+com/portal/configuration/IConfiguration.class

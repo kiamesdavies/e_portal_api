@@ -1,0 +1,4 @@
+com/traccar/positions/DevicePositionsMapper.class
+com/traccar/positions/DevicePositionsMapperImpl.class
+com/traccar/positions/DevicePositions.class
+com/traccar/positions/DevicePositionsResource.class
