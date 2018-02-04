@@ -37,7 +37,13 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "JpaAppUser.findAll", query = "SELECT j FROM JpaAppUser j")})
 public class JpaAppUser implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jpaAppUser", fetch = FetchType.LAZY)
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "registration_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date registrationDate;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "appUserId", fetch = FetchType.LAZY)
     private List<JpaPinRequest> jpaPinRequestList;
 
     private static final long serialVersionUID = 1L;
@@ -266,6 +272,14 @@ public class JpaAppUser implements Serializable {
 
     public void setJpaPinRequestList(List<JpaPinRequest> jpaPinRequestList) {
         this.jpaPinRequestList = jpaPinRequestList;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
     }
     
 }

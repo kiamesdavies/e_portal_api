@@ -25,6 +25,8 @@ public class QJpaOnliePaymentTransactionRawReponse extends EntityPathBase<JpaOnl
 
     public final NumberPath<Integer> rawResponseId = createNumber("rawResponseId", Integer.class);
 
+    public final DateTimePath<java.util.Date> requestReceivedTime = createDateTime("requestReceivedTime", java.util.Date.class);
+
     public final StringPath url = createString("url");
 
     public QJpaOnliePaymentTransactionRawReponse(String variable) {

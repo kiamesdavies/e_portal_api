@@ -38,6 +38,8 @@ public class QJpaOnlineTransaction extends EntityPathBase<JpaOnlineTransaction> 
 
     public final StringPath responseMessage = createString("responseMessage");
 
+    public final StringPath rrr = createString("rrr");
+
     public final BooleanPath sucessful = createBoolean("sucessful");
 
     public final StringPath transactionId = createString("transactionId");

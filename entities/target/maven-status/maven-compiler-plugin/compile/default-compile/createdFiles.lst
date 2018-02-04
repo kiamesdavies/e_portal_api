@@ -1,4 +1,4 @@
-com/portal/entities/JpaPinRequestPK.class
+com/portal/entities/JpaApplicationSummary.class
 com/portal/entities/QJpaApplicationData.class
 com/portal/entities/JsonbStringConverter.class
 com/portal/entities/QJpaPinRequest.class
@@ -6,14 +6,15 @@ com/portal/entities/JsonStringConverter.class
 com/portal/entities/JpaMessageTemplate.class
 com/portal/entities/JpaOnliePaymentTransactionRawReponse.class
 com/portal/entities/XmlStringConverter.class
+com/portal/entities/QJpaApplicationSummary.class
 com/portal/entities/JpaPinRequest.class
+com/portal/entities/QJpaCategory.class
 com/portal/entities/QJpaManualTransaction.class
 com/portal/entities/QJpaMessageTemplate.class
 com/portal/entities/JpaAppUser.class
 com/portal/entities/JpaManualTransaction.class
 com/portal/entities/QJpaOnliePaymentTransactionRawReponse.class
 com/portal/entities/JpaAppConfig.class
-com/portal/entities/QJpaPinRequestPK.class
 com/portal/entities/QJpaPayment.class
 com/portal/entities/QJpaAppConfig.class
 com/portal/entities/QJpaForm.class
@@ -25,3 +26,4 @@ com/portal/entities/QJpaAppUser.class
 com/portal/entities/JpaApplicationData.class
 com/portal/entities/JpaPayment.class
 com/portal/entities/JpaOnlineTransaction.class
+com/portal/entities/JpaCategory.class

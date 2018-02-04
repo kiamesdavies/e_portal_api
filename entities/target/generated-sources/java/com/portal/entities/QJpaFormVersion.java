@@ -26,11 +26,11 @@ public class QJpaFormVersion extends EntityPathBase<JpaFormVersion> {
 
     public final DateTimePath<java.util.Date> dateCreated = createDateTime("dateCreated", java.util.Date.class);
 
-    public final StringPath formId = createString("formId");
+    public final QJpaForm formId;
 
     public final StringPath formVersionId = createString("formVersionId");
 
-    public final QJpaForm jpaForm;
+    public final ListPath<JpaApplicationData, QJpaApplicationData> jpaApplicationDataList = this.<JpaApplicationData, QJpaApplicationData>createList("jpaApplicationDataList", JpaApplicationData.class, QJpaApplicationData.class, PathInits.DIRECT2);
 
     public final StringPath jsonStructure = createString("jsonStructure");
 
@@ -56,7 +56,7 @@ public class QJpaFormVersion extends EntityPathBase<JpaFormVersion> {
 
     public QJpaFormVersion(Class<? extends JpaFormVersion> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.jpaForm = inits.isInitialized("jpaForm") ? new QJpaForm(forProperty("jpaForm"), inits.get("jpaForm")) : null;
+        this.formId = inits.isInitialized("formId") ? new QJpaForm(forProperty("formId")) : null;
     }
 
 }

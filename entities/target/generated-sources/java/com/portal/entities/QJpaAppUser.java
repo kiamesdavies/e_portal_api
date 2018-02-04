@@ -50,6 +50,8 @@ public class QJpaAppUser extends EntityPathBase<JpaAppUser> {
 
     public final StringPath password = createString("password");
 
+    public final DateTimePath<java.util.Date> registrationDate = createDateTime("registrationDate", java.util.Date.class);
+
     public final StringPath roleName = createString("roleName");
 
     public final StringPath userName = createString("userName");

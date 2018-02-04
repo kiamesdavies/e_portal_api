@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -34,8 +35,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class JpaPinRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected JpaPinRequestPK jpaPinRequestPK;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 8)
+    @Column(name = "pin_id")
+    private String pinId;
     @Basic(optional = false)
     @NotNull
     @Column(name = "used")
@@ -48,33 +53,29 @@ public class JpaPinRequest implements Serializable {
     @Column(name = "date_used")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateUsed;
-    @JoinColumn(name = "app_user_id", referencedColumnName = "app_user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "app_user_id", referencedColumnName = "app_user_id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private JpaAppUser jpaAppUser;
+    private JpaAppUser appUserId;
 
     public JpaPinRequest() {
     }
 
-    public JpaPinRequest(JpaPinRequestPK jpaPinRequestPK) {
-        this.jpaPinRequestPK = jpaPinRequestPK;
+    public JpaPinRequest(String pinId) {
+        this.pinId = pinId;
     }
 
-    public JpaPinRequest(JpaPinRequestPK jpaPinRequestPK, boolean used, Date dateCreated) {
-        this.jpaPinRequestPK = jpaPinRequestPK;
+    public JpaPinRequest(String pinId, boolean used, Date dateCreated) {
+        this.pinId = pinId;
         this.used = used;
         this.dateCreated = dateCreated;
     }
 
-    public JpaPinRequest(String pinId, String appUserId) {
-        this.jpaPinRequestPK = new JpaPinRequestPK(pinId, appUserId);
+    public String getPinId() {
+        return pinId;
     }
 
-    public JpaPinRequestPK getJpaPinRequestPK() {
-        return jpaPinRequestPK;
-    }
-
-    public void setJpaPinRequestPK(JpaPinRequestPK jpaPinRequestPK) {
-        this.jpaPinRequestPK = jpaPinRequestPK;
+    public void setPinId(String pinId) {
+        this.pinId = pinId;
     }
 
     public boolean getUsed() {
@@ -101,18 +102,18 @@ public class JpaPinRequest implements Serializable {
         this.dateUsed = dateUsed;
     }
 
-    public JpaAppUser getJpaAppUser() {
-        return jpaAppUser;
+    public JpaAppUser getAppUserId() {
+        return appUserId;
     }
 
-    public void setJpaAppUser(JpaAppUser jpaAppUser) {
-        this.jpaAppUser = jpaAppUser;
+    public void setAppUserId(JpaAppUser appUserId) {
+        this.appUserId = appUserId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (jpaPinRequestPK != null ? jpaPinRequestPK.hashCode() : 0);
+        hash += (pinId != null ? pinId.hashCode() : 0);
         return hash;
     }
 
@@ -123,7 +124,7 @@ public class JpaPinRequest implements Serializable {
             return false;
         }
         JpaPinRequest other = (JpaPinRequest) object;
-        if ((this.jpaPinRequestPK == null && other.jpaPinRequestPK != null) || (this.jpaPinRequestPK != null && !this.jpaPinRequestPK.equals(other.jpaPinRequestPK))) {
+        if ((this.pinId == null && other.pinId != null) || (this.pinId != null && !this.pinId.equals(other.pinId))) {
             return false;
         }
         return true;
@@ -131,7 +132,7 @@ public class JpaPinRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "com.portal.entities.JpaPinRequest[ jpaPinRequestPK=" + jpaPinRequestPK + " ]";
+        return "com.portal.entities.JpaPinRequest[ pinId=" + pinId + " ]";
     }
     
 }

@@ -30,6 +30,8 @@ public class QJpaApplicationData extends EntityPathBase<JpaApplicationData> {
 
     public final StringPath formData = createString("formData");
 
+    public final QJpaFormVersion formVersionId;
+
     public final QJpaAppUser jpaAppUser;
 
     public final StringPath xmlFormData = createString("xmlFormData");
@@ -52,6 +54,7 @@ public class QJpaApplicationData extends EntityPathBase<JpaApplicationData> {
 
     public QJpaApplicationData(Class<? extends JpaApplicationData> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.formVersionId = inits.isInitialized("formVersionId") ? new QJpaFormVersion(forProperty("formVersionId"), inits.get("formVersionId")) : null;
         this.jpaAppUser = inits.isInitialized("jpaAppUser") ? new QJpaAppUser(forProperty("jpaAppUser"), inits.get("jpaAppUser")) : null;
     }
 

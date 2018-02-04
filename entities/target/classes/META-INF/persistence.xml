@@ -16,5 +16,7 @@
     <class>com.portal.entities.JpaAppConfig</class>
     <class>com.portal.entities.JpaMessageTemplate</class>
     <class>com.portal.entities.JpaPinRequest</class>
+    <class>com.portal.entities.JpaApplicationSummary</class>
+    <class>com.portal.entities.JpaCategory</class>
   </persistence-unit>
 </persistence>

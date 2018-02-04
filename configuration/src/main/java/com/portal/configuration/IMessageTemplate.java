@@ -24,7 +24,9 @@ public interface IMessageTemplate {
         INVITATION_NEW_USER,
         EMAIL_VERIFICATION,
         INVOICE_PAYMENT,
-        COLLABORATOR_INVITATION, MOBILE_PIN_RESET
+        COLLABORATOR_INVITATION, 
+        MOBILE_PIN_RESET,
+        CERTICIATE
 
     }
 

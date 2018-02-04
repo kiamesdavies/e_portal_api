@@ -22,7 +22,7 @@ import java.util.TimeZone;
  */
 public class MyObjectMapper extends ObjectMapper {
 
-    private static SimpleDateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ zzz");
+    private static SimpleDateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     public MyObjectMapper() {
         super();
@@ -51,19 +51,9 @@ public class MyObjectMapper extends ObjectMapper {
     }
 
     public <T extends Object> T readValue(String content, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
-        try {
-            DATEFORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-            this.setDateFormat(DATEFORMAT);
-            return super.readValue(content, valueType);
-        } catch (Exception e) {
-            //backward compatibility
-            this.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-            return super.readValue(content, valueType);
-
-        } finally {
-            //reset
-            this.setDateFormat(DATEFORMAT);
-        }
+        DATEFORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.setDateFormat(DATEFORMAT);
+        return super.readValue(content, valueType);
     }
 
     @Override

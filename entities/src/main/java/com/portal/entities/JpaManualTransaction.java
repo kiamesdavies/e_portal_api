@@ -34,6 +34,19 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "JpaManualTransaction.findAll", query = "SELECT j FROM JpaManualTransaction j")})
 public class JpaManualTransaction implements Serializable {
 
+    @Size(max = 128)
+    @Column(name = "bank_name")
+    private String bankName;
+    @Size(max = 128)
+    @Column(name = "bank_teller")
+    private String bankTeller;
+    @Column(name = "date_paid")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date datePaid;
+
+    @Size( max = 64)
+    @Column(name = "receipt")
+    private String receipt;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -167,6 +180,16 @@ public class JpaManualTransaction implements Serializable {
         this.paymentId = paymentId;
     }
 
+    public String getReceipt() {
+        return receipt;
+    }
+
+    public void setReceipt(String receipt) {
+        this.receipt = receipt;
+    }
+
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -190,6 +213,30 @@ public class JpaManualTransaction implements Serializable {
     @Override
     public String toString() {
         return "com.portal.entities.JpaManualTransaction[ transactionId=" + transactionId + " ]";
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getBankTeller() {
+        return bankTeller;
+    }
+
+    public void setBankTeller(String bankTeller) {
+        this.bankTeller = bankTeller;
+    }
+
+    public Date getDatePaid() {
+        return datePaid;
+    }
+
+    public void setDatePaid(Date datePaid) {
+        this.datePaid = datePaid;
     }
     
 }

@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    <persistence-unit name="traccarpu" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="portalpu" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <non-jta-data-source>DefaultDS</non-jta-data-source>
-        <class>com.traccar.entities.JpaDevicePositionsView</class>
-    
+        <class>com.portal.entities.JpaOnliePaymentTransactionRawReponse</class>
+        <class>com.portal.entities.JpaApplicationData</class>
+        <class>com.portal.entities.JpaAppUser</class>
+        <class>com.portal.entities.JpaFormVersion</class>
+        <class>com.portal.entities.JpaForm</class>
+        <class>com.portal.entities.JpaPayment</class>
+        <class>com.portal.entities.JpaManualTransaction</class>
+        <class>com.portal.entities.JpaOnlineTransaction</class>
+        <class>com.portal.entities.JsonStringConverter</class>
+        <class>com.portal.entities.JsonbStringConverter</class>
+        <class>com.portal.entities.XmlStringConverter</class>
+        <class>com.portal.entities.JpaAppConfig</class>
+        <class>com.portal.entities.JpaMessageTemplate</class>
+        <class>com.portal.entities.JpaPinRequest</class>
+         <class>com.portal.entities.JpaApplicationSummary</class>
+         <class>com.portal.entities.JpaCategory</class>
         <properties>
             <!--	    <property name="eclipselink.cache.shared.default" value="true"/>-->
            

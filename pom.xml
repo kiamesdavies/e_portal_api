@@ -7,7 +7,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>entities</module>
-        <module>positions</module>
         <module>parent</module>
         <module>json-jpa-query</module>
         <module>commons</module>
@@ -15,9 +14,9 @@
         <module>binder</module>
         <module>actors</module>
         <module>payment</module>
-        <module>form</module>
         <module>applications</module>
         <module>configuration</module>
+        <module>web_mvc</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

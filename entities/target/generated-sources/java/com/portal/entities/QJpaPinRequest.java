@@ -22,13 +22,13 @@ public class QJpaPinRequest extends EntityPathBase<JpaPinRequest> {
 
     public static final QJpaPinRequest jpaPinRequest = new QJpaPinRequest("jpaPinRequest");
 
+    public final QJpaAppUser appUserId;
+
     public final DateTimePath<java.util.Date> dateCreated = createDateTime("dateCreated", java.util.Date.class);
 
     public final DateTimePath<java.util.Date> dateUsed = createDateTime("dateUsed", java.util.Date.class);
 
-    public final QJpaAppUser jpaAppUser;
-
-    public final QJpaPinRequestPK jpaPinRequestPK;
+    public final StringPath pinId = createString("pinId");
 
     public final BooleanPath used = createBoolean("used");
 
@@ -50,8 +50,7 @@ public class QJpaPinRequest extends EntityPathBase<JpaPinRequest> {
 
     public QJpaPinRequest(Class<? extends JpaPinRequest> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.jpaAppUser = inits.isInitialized("jpaAppUser") ? new QJpaAppUser(forProperty("jpaAppUser"), inits.get("jpaAppUser")) : null;
-        this.jpaPinRequestPK = inits.isInitialized("jpaPinRequestPK") ? new QJpaPinRequestPK(forProperty("jpaPinRequestPK")) : null;
+        this.appUserId = inits.isInitialized("appUserId") ? new QJpaAppUser(forProperty("appUserId"), inits.get("appUserId")) : null;
     }
 
 }

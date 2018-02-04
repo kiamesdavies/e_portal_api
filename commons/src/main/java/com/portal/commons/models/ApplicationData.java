@@ -1,4 +1,4 @@
-package com.portal.admin.models;
+package com.portal.commons.models;
 
 import com.portal.commons.models.AppUser;
 import java.lang.String;
@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 )
 public class ApplicationData {
 
+    private FormVersion formVersionId;
     private String xmlFormData;
     private String formData;
     @Size(
@@ -86,7 +87,13 @@ public class ApplicationData {
     public void setFormData(String formData) {
         this.formData = formData;
     }
-    
-    
-    
+
+    public FormVersion getFormVersionId() {
+        return formVersionId;
+    }
+
+    public void setFormVersionId(FormVersion formVersionId) {
+        this.formVersionId = formVersionId;
+    }
+
 }

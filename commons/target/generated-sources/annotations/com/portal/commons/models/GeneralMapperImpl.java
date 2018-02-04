@@ -1,21 +1,5 @@
 package com.portal.commons.models;
 
-import com.portal.admin.models.AppUser;
-
-import com.portal.admin.models.ApplicationData;
-
-import com.portal.admin.models.GeneratedForm;
-
-import com.portal.admin.models.GeneratedFormVersion;
-
-import com.portal.admin.models.GeneratedManualTransaction;
-
-import com.portal.admin.models.GeneratedOnliePaymentTransactionRawReponse;
-
-import com.portal.admin.models.GeneratedOnlineTransaction;
-
-import com.portal.admin.models.GeneratedPayment;
-
 import com.portal.commons.util.CycleAvoidingMappingContext;
 
 import com.portal.entities.JpaAppConfig;
@@ -23,6 +7,10 @@ import com.portal.entities.JpaAppConfig;
 import com.portal.entities.JpaAppUser;
 
 import com.portal.entities.JpaApplicationData;
+
+import com.portal.entities.JpaApplicationSummary;
+
+import com.portal.entities.JpaCategory;
 
 import com.portal.entities.JpaForm;
 
@@ -44,13 +32,165 @@ import javax.annotation.Generated;
 
     value = "org.mapstruct.ap.MappingProcessor",
 
-    date = "2018-01-30T13:52:29+0100",
+    date = "2018-02-05T00:19:54+0100",
 
     comments = "version: 1.2.0.Beta2, compiler: javac, environment: Java 1.8.0_151 (Oracle Corporation)"
 
 )
 
 public class GeneralMapperImpl implements GeneralMapper {
+
+    @Override
+
+    public Category jpaCategoryToCategory(JpaCategory category, CycleAvoidingMappingContext context) {
+
+        Category target = context.getMappedInstance( category, Category.class );
+
+        if ( target != null ) {
+
+            return target;
+        }
+
+        if ( category == null ) {
+
+            return null;
+        }
+
+        Category category1 = new Category();
+
+        context.storeMappedInstance( category, category1 );
+
+        category1.setCategoryId( category.getCategoryId() );
+
+        category1.setCategoryName( category.getCategoryName() );
+
+        category1.setDateCreated( category.getDateCreated() );
+
+        category1.setCreatedBy( category.getCreatedBy() );
+
+        category1.setDateModified( category.getDateModified() );
+
+        category1.setCategoryDesc( category.getCategoryDesc() );
+
+        category1.setModifiedBy( category.getModifiedBy() );
+
+        category1.setAmount( category.getAmount() );
+
+        return category1;
+    }
+
+    @Override
+
+    public JpaCategory categorytoJpaCategory(Category c, CycleAvoidingMappingContext context) {
+
+        JpaCategory target = context.getMappedInstance( c, JpaCategory.class );
+
+        if ( target != null ) {
+
+            return target;
+        }
+
+        if ( c == null ) {
+
+            return null;
+        }
+
+        JpaCategory jpaCategory = new JpaCategory();
+
+        context.storeMappedInstance( c, jpaCategory );
+
+        jpaCategory.setCategoryId( c.getCategoryId() );
+
+        jpaCategory.setCategoryName( c.getCategoryName() );
+
+        jpaCategory.setDateCreated( c.getDateCreated() );
+
+        jpaCategory.setCreatedBy( c.getCreatedBy() );
+
+        jpaCategory.setDateModified( c.getDateModified() );
+
+        jpaCategory.setCategoryDesc( c.getCategoryDesc() );
+
+        jpaCategory.setModifiedBy( c.getModifiedBy() );
+
+        jpaCategory.setAmount( c.getAmount() );
+
+        return jpaCategory;
+    }
+
+    @Override
+
+    public ApplicationSummary jpaApplicationSummaryToApplicationSummary(JpaApplicationSummary applicationSummary) {
+
+        if ( applicationSummary == null ) {
+
+            return null;
+        }
+
+        ApplicationSummary applicationSummary1 = new ApplicationSummary();
+
+        applicationSummary1.setQualificationsWithDate( applicationSummary.getQualificationsWithDate() );
+
+        applicationSummary1.setAppUserId( applicationSummary.getAppUserId() );
+
+        applicationSummary1.setDateCreated( applicationSummary.getDateCreated() );
+
+        applicationSummary1.setUserName( applicationSummary.getUserName() );
+
+        applicationSummary1.setFilledForm( applicationSummary.getFilledForm() );
+
+        applicationSummary1.setCategory( applicationSummary.getCategory() );
+
+        applicationSummary1.setSurName( applicationSummary.getSurName() );
+
+        applicationSummary1.setFirstName( applicationSummary.getFirstName() );
+
+        applicationSummary1.setMiddleName( applicationSummary.getMiddleName() );
+
+        applicationSummary1.setDateOfBirth( applicationSummary.getDateOfBirth() );
+
+        applicationSummary1.setSex( applicationSummary.getSex() );
+
+        applicationSummary1.setMobileNumber( applicationSummary.getMobileNumber() );
+
+        applicationSummary1.seteMail( applicationSummary.geteMail() );
+
+        applicationSummary1.setNationality( applicationSummary.getNationality() );
+
+        applicationSummary1.setStateOfOrigin( applicationSummary.getStateOfOrigin() );
+
+        applicationSummary1.setLgaOfOrigin( applicationSummary.getLgaOfOrigin() );
+
+        applicationSummary1.setCurrentEmployer( applicationSummary.getCurrentEmployer() );
+
+        applicationSummary1.setCurrentEmployerOfficeAddress( applicationSummary.getCurrentEmployerOfficeAddress() );
+
+        applicationSummary1.setAreaOfSpecialization( applicationSummary.getAreaOfSpecialization() );
+
+        applicationSummary1.setFormNo( applicationSummary.getFormNo() );
+
+        applicationSummary1.setInstitutionsAttended( applicationSummary.getInstitutionsAttended() );
+
+        applicationSummary1.setWorkExperience( applicationSummary.getWorkExperience() );
+
+        applicationSummary1.setDatePaid( applicationSummary.getDatePaid() );
+
+        applicationSummary1.setBankName( applicationSummary.getBankName() );
+
+        applicationSummary1.setBankTeller( applicationSummary.getBankTeller() );
+
+        applicationSummary1.setAmountPaid( applicationSummary.getAmountPaid() );
+
+        applicationSummary1.setPaid( applicationSummary.getPaid() );
+
+        applicationSummary1.setExpiryDate( applicationSummary.getExpiryDate() );
+
+        applicationSummary1.setDateInitialized( applicationSummary.getDateInitialized() );
+
+        applicationSummary1.setPaymentId( applicationSummary.getPaymentId() );
+
+        return applicationSummary1;
+    }
 
     @Override
 
@@ -200,7 +340,7 @@ public class GeneralMapperImpl implements GeneralMapper {
 
         jpaAppUser.setActive( model.getActive() );
 
-        jpaAppUser.setJpaApplicationData( model.getJpaApplicationData() == null ? null :  generatedApplicationDataToJpaApplicationData(model.getJpaApplicationData(),context) );
+        jpaAppUser.setRegistrationDate( model.getRegistrationDate() );
 
         return jpaAppUser;
     }
@@ -249,14 +389,14 @@ public class GeneralMapperImpl implements GeneralMapper {
 
         appUser.setActive( entity.getActive() );
 
-        appUser.setJpaApplicationData( entity.getJpaApplicationData() == null ? null : jpaApplicationDataToGeneratedApplicationData(entity.getJpaApplicationData(),context) );
+        appUser.setRegistrationDate( entity.getRegistrationDate() );
 
         return appUser;
     }
 
     @Override
 
-    public JpaPayment generatedPaymentToJpaPayment(GeneratedPayment model, CycleAvoidingMappingContext context) {
+    public JpaPayment generatedPaymentToJpaPayment(Payment model, CycleAvoidingMappingContext context) {
 
         JpaPayment target = context.getMappedInstance( model, JpaPayment.class );
 
@@ -286,6 +426,16 @@ public class GeneralMapperImpl implements GeneralMapper {
 
         jpaPayment.setAmountPaid( model.getAmountPaid() );
 
+        jpaPayment.setPaymentType( model.getPaymentType() );
+
+        jpaPayment.setBankName( model.getBankName() );
+
+        jpaPayment.setBankTeller( model.getBankTeller() );
+
+        jpaPayment.setCertificatePath( model.getCertificatePath() );
+
+        jpaPayment.setAmountToPay( model.getAmountToPay() );
+
         jpaPayment.setAppUserId( model.getAppUserId() == null ? null :  generatedAppUserToJpaAppUser(model.getAppUserId(),context) );
 
         return jpaPayment;
@@ -293,9 +443,9 @@ public class GeneralMapperImpl implements GeneralMapper {
 
     @Override
 
-    public GeneratedPayment jpaPaymentToGeneratedPayment(JpaPayment entity, CycleAvoidingMappingContext context) {
+    public Payment jpaPaymentToGeneratedPayment(JpaPayment entity, CycleAvoidingMappingContext context) {
 
-        GeneratedPayment target = context.getMappedInstance( entity, GeneratedPayment.class );
+        Payment target = context.getMappedInstance( entity, Payment.class );
 
         if ( target != null ) {
 
@@ -307,30 +457,40 @@ public class GeneralMapperImpl implements GeneralMapper {
             return null;
         }
 
-        GeneratedPayment generatedPayment = new GeneratedPayment();
+        Payment payment = new Payment();
 
-        context.storeMappedInstance( entity, generatedPayment );
+        context.storeMappedInstance( entity, payment );
 
-        generatedPayment.setPaymentId( entity.getPaymentId() );
+        payment.setPaymentId( entity.getPaymentId() );
 
-        generatedPayment.setDateInitialized( entity.getDateInitialized() );
+        payment.setDateInitialized( entity.getDateInitialized() );
 
-        generatedPayment.setDatePaid( entity.getDatePaid() );
+        payment.setDatePaid( entity.getDatePaid() );
 
-        generatedPayment.setExpiryDate( entity.getExpiryDate() );
+        payment.setExpiryDate( entity.getExpiryDate() );
 
-        generatedPayment.setPaid( entity.getPaid() );
+        payment.setPaid( entity.getPaid() );
 
-        generatedPayment.setAmountPaid( entity.getAmountPaid() );
+        payment.setAmountPaid( entity.getAmountPaid() );
 
-        generatedPayment.setAppUserId( entity.getAppUserId() == null ? null : jpaAppUserToGeneratedAppUser(entity.getAppUserId(),context) );
+        payment.setCertificatePath( entity.getCertificatePath() );
 
-        return generatedPayment;
+        payment.setBankName( entity.getBankName() );
+
+        payment.setBankTeller( entity.getBankTeller() );
+
+        payment.setPaymentType( entity.getPaymentType() );
+
+        payment.setAmountToPay( entity.getAmountToPay() );
+
+        payment.setAppUserId( entity.getAppUserId() == null ? null : jpaAppUserToGeneratedAppUser(entity.getAppUserId(),context) );
+
+        return payment;
     }
 
     @Override
 
-    public JpaOnlineTransaction generatedOnlineTransactionToJpaOnlineTransaction(GeneratedOnlineTransaction model, CycleAvoidingMappingContext context) {
+    public JpaOnlineTransaction generatedOnlineTransactionToJpaOnlineTransaction(OnlineTransaction model, CycleAvoidingMappingContext context) {
 
         JpaOnlineTransaction target = context.getMappedInstance( model, JpaOnlineTransaction.class );
 
@@ -366,6 +526,8 @@ public class GeneralMapperImpl implements GeneralMapper {
 
         jpaOnlineTransaction.setResponseCode( model.getResponseCode() );
 
+        jpaOnlineTransaction.setRrr( model.getRrr() );
+
         jpaOnlineTransaction.setPaymentId( model.getPaymentId() == null ? null :  generatedPaymentToJpaPayment(model.getPaymentId(),context) );
 
         return jpaOnlineTransaction;
@@ -373,9 +535,9 @@ public class GeneralMapperImpl implements GeneralMapper {
 
     @Override
 
-    public GeneratedOnlineTransaction jpaOnlineTransactionToGeneratedOnlineTransaction(JpaOnlineTransaction entity, CycleAvoidingMappingContext context) {
+    public OnlineTransaction jpaOnlineTransactionToGeneratedOnlineTransaction(JpaOnlineTransaction entity, CycleAvoidingMappingContext context) {
 
-        GeneratedOnlineTransaction target = context.getMappedInstance( entity, GeneratedOnlineTransaction.class );
+        OnlineTransaction target = context.getMappedInstance( entity, OnlineTransaction.class );
 
         if ( target != null ) {
 
@@ -387,36 +549,38 @@ public class GeneralMapperImpl implements GeneralMapper {
             return null;
         }
 
-        GeneratedOnlineTransaction generatedOnlineTransaction = new GeneratedOnlineTransaction();
+        OnlineTransaction onlineTransaction = new OnlineTransaction();
 
-        context.storeMappedInstance( entity, generatedOnlineTransaction );
+        context.storeMappedInstance( entity, onlineTransaction );
 
-        generatedOnlineTransaction.setTransactionId( entity.getTransactionId() );
+        onlineTransaction.setTransactionId( entity.getTransactionId() );
 
-        generatedOnlineTransaction.setDateInitialized( entity.getDateInitialized() );
+        onlineTransaction.setDateInitialized( entity.getDateInitialized() );
 
-        generatedOnlineTransaction.setAmountToPay( entity.getAmountToPay() );
+        onlineTransaction.setAmountToPay( entity.getAmountToPay() );
 
-        generatedOnlineTransaction.setAmountPaid( entity.getAmountPaid() );
+        onlineTransaction.setAmountPaid( entity.getAmountPaid() );
 
-        generatedOnlineTransaction.setDatePayed( entity.getDatePayed() );
+        onlineTransaction.setDatePayed( entity.getDatePayed() );
 
-        generatedOnlineTransaction.setSucessful( entity.getSucessful() );
+        onlineTransaction.setSucessful( entity.getSucessful() );
 
-        generatedOnlineTransaction.setCreditedAccount( entity.getCreditedAccount() );
+        onlineTransaction.setCreditedAccount( entity.getCreditedAccount() );
 
-        generatedOnlineTransaction.setResponseMessage( entity.getResponseMessage() );
+        onlineTransaction.setResponseMessage( entity.getResponseMessage() );
 
-        generatedOnlineTransaction.setResponseCode( entity.getResponseCode() );
+        onlineTransaction.setResponseCode( entity.getResponseCode() );
 
-        generatedOnlineTransaction.setPaymentId( entity.getPaymentId() == null ? null : jpaPaymentToGeneratedPayment(entity.getPaymentId(),context) );
+        onlineTransaction.setRrr( entity.getRrr() );
 
-        return generatedOnlineTransaction;
+        onlineTransaction.setPaymentId( entity.getPaymentId() == null ? null : jpaPaymentToGeneratedPayment(entity.getPaymentId(),context) );
+
+        return onlineTransaction;
     }
 
     @Override
 
-    public JpaOnliePaymentTransactionRawReponse generatedOnliePaymentTransactionRawReponseToJpaOnliePaymentTransactionRawReponse(GeneratedOnliePaymentTransactionRawReponse model, CycleAvoidingMappingContext context) {
+    public JpaOnliePaymentTransactionRawReponse generatedOnliePaymentTransactionRawReponseToJpaOnliePaymentTransactionRawReponse(OnliePaymentTransactionRawReponse model, CycleAvoidingMappingContext context) {
 
         JpaOnliePaymentTransactionRawReponse target = context.getMappedInstance( model, JpaOnliePaymentTransactionRawReponse.class );
 
@@ -445,9 +609,9 @@ public class GeneralMapperImpl implements GeneralMapper {
 
     @Override
 
-    public GeneratedOnliePaymentTransactionRawReponse jpaOnliePaymentTransactionRawReponseToGeneratedOnliePaymentTransactionRawReponse(JpaOnliePaymentTransactionRawReponse entity, CycleAvoidingMappingContext context) {
+    public OnliePaymentTransactionRawReponse jpaOnliePaymentTransactionRawReponseToGeneratedOnliePaymentTransactionRawReponse(JpaOnliePaymentTransactionRawReponse entity, CycleAvoidingMappingContext context) {
 
-        GeneratedOnliePaymentTransactionRawReponse target = context.getMappedInstance( entity, GeneratedOnliePaymentTransactionRawReponse.class );
+        OnliePaymentTransactionRawReponse target = context.getMappedInstance( entity, OnliePaymentTransactionRawReponse.class );
 
         if ( target != null ) {
 
@@ -459,22 +623,22 @@ public class GeneralMapperImpl implements GeneralMapper {
             return null;
         }
 
-        GeneratedOnliePaymentTransactionRawReponse generatedOnliePaymentTransactionRawReponse = new GeneratedOnliePaymentTransactionRawReponse();
+        OnliePaymentTransactionRawReponse onliePaymentTransactionRawReponse = new OnliePaymentTransactionRawReponse();
 
-        context.storeMappedInstance( entity, generatedOnliePaymentTransactionRawReponse );
+        context.storeMappedInstance( entity, onliePaymentTransactionRawReponse );
 
-        generatedOnliePaymentTransactionRawReponse.setRawResponseId( entity.getRawResponseId() );
+        onliePaymentTransactionRawReponse.setRawResponseId( entity.getRawResponseId() );
 
-        generatedOnliePaymentTransactionRawReponse.setUrl( entity.getUrl() );
+        onliePaymentTransactionRawReponse.setUrl( entity.getUrl() );
 
-        generatedOnliePaymentTransactionRawReponse.setDateCreated( entity.getDateCreated() );
+        onliePaymentTransactionRawReponse.setDateCreated( entity.getDateCreated() );
 
-        return generatedOnliePaymentTransactionRawReponse;
+        return onliePaymentTransactionRawReponse;
     }
 
     @Override
 
-    public JpaFormVersion generatedFormVersionToJpaFormVersion(GeneratedFormVersion model, CycleAvoidingMappingContext context) {
+    public JpaFormVersion generatedFormVersionToJpaFormVersion(FormVersion model, CycleAvoidingMappingContext context) {
 
         JpaFormVersion target = context.getMappedInstance( model, JpaFormVersion.class );
 
@@ -498,24 +662,22 @@ public class GeneralMapperImpl implements GeneralMapper {
 
         jpaFormVersion.setCreatedBy( model.getCreatedBy() );
 
-        jpaFormVersion.setFormId( model.getFormId() );
-
         jpaFormVersion.setXformStructure( model.getXformStructure() );
 
         jpaFormVersion.setJsonStructure( model.getJsonStructure() );
 
         jpaFormVersion.setPreviewUrl( model.getPreviewUrl() );
 
-        jpaFormVersion.setJpaForm( model.getJpaForm() == null ? null :  generatedFormToJpaForm(model.getJpaForm(),context) );
+        jpaFormVersion.setFormId( model.getFormId() == null ? null :  generatedFormToJpaForm(model.getFormId(),context) );
 
         return jpaFormVersion;
     }
 
     @Override
 
-    public GeneratedFormVersion jpaFormVersionToGeneratedFormVersion(JpaFormVersion entity, CycleAvoidingMappingContext context) {
+    public FormVersion jpaFormVersionToGeneratedFormVersion(JpaFormVersion entity, CycleAvoidingMappingContext context) {
 
-        GeneratedFormVersion target = context.getMappedInstance( entity, GeneratedFormVersion.class );
+        FormVersion target = context.getMappedInstance( entity, FormVersion.class );
 
         if ( target != null ) {
 
@@ -527,32 +689,30 @@ public class GeneralMapperImpl implements GeneralMapper {
             return null;
         }
 
-        GeneratedFormVersion generatedFormVersion = new GeneratedFormVersion();
+        FormVersion formVersion = new FormVersion();
 
-        context.storeMappedInstance( entity, generatedFormVersion );
+        context.storeMappedInstance( entity, formVersion );
 
-        generatedFormVersion.setFormVersionId( entity.getFormVersionId() );
+        formVersion.setFormVersionId( entity.getFormVersionId() );
 
-        generatedFormVersion.setDateCreated( entity.getDateCreated() );
+        formVersion.setDateCreated( entity.getDateCreated() );
 
-        generatedFormVersion.setCreatedBy( entity.getCreatedBy() );
+        formVersion.setCreatedBy( entity.getCreatedBy() );
 
-        generatedFormVersion.setFormId( entity.getFormId() );
+        formVersion.setPreviewUrl( entity.getPreviewUrl() );
 
-        generatedFormVersion.setPreviewUrl( entity.getPreviewUrl() );
+        formVersion.setJsonStructure( entity.getJsonStructure() );
 
-        generatedFormVersion.setJsonStructure( entity.getJsonStructure() );
+        formVersion.setXformStructure( entity.getXformStructure() );
 
-        generatedFormVersion.setXformStructure( entity.getXformStructure() );
+        formVersion.setFormId( entity.getFormId() == null ? null : jpaFormToGeneratedForm(entity.getFormId(),context) );
 
-        generatedFormVersion.setJpaForm( entity.getJpaForm() == null ? null : jpaFormToGeneratedForm(entity.getJpaForm(),context) );
-
-        return generatedFormVersion;
+        return formVersion;
     }
 
     @Override
 
-    public JpaManualTransaction generatedManualTransactionToJpaManualTransaction(GeneratedManualTransaction model, CycleAvoidingMappingContext context) {
+    public JpaManualTransaction generatedManualTransactionToJpaManualTransaction(ManualTransaction model, CycleAvoidingMappingContext context) {
 
         JpaManualTransaction target = context.getMappedInstance( model, JpaManualTransaction.class );
 
@@ -586,6 +746,12 @@ public class GeneralMapperImpl implements GeneralMapper {
 
         jpaManualTransaction.setProcessingMessage( model.getProcessingMessage() );
 
+        jpaManualTransaction.setBankName( model.getBankName() );
+
+        jpaManualTransaction.setBankTeller( model.getBankTeller() );
+
+        jpaManualTransaction.setDatePaid( model.getDatePaid() );
+
         jpaManualTransaction.setPaymentId( model.getPaymentId() == null ? null :  generatedPaymentToJpaPayment(model.getPaymentId(),context) );
 
         jpaManualTransaction.setCreatedByAppUserId( model.getCreatedByAppUserId() == null ? null :  generatedAppUserToJpaAppUser(model.getCreatedByAppUserId(),context) );
@@ -595,9 +761,9 @@ public class GeneralMapperImpl implements GeneralMapper {
 
     @Override
 
-    public GeneratedManualTransaction jpaManualTransactionToGeneratedManualTransaction(JpaManualTransaction entity, CycleAvoidingMappingContext context) {
+    public ManualTransaction jpaManualTransactionToGeneratedManualTransaction(JpaManualTransaction entity, CycleAvoidingMappingContext context) {
 
-        GeneratedManualTransaction target = context.getMappedInstance( entity, GeneratedManualTransaction.class );
+        ManualTransaction target = context.getMappedInstance( entity, ManualTransaction.class );
 
         if ( target != null ) {
 
@@ -609,36 +775,42 @@ public class GeneralMapperImpl implements GeneralMapper {
             return null;
         }
 
-        GeneratedManualTransaction generatedManualTransaction = new GeneratedManualTransaction();
+        ManualTransaction manualTransaction = new ManualTransaction();
 
-        context.storeMappedInstance( entity, generatedManualTransaction );
+        context.storeMappedInstance( entity, manualTransaction );
 
-        generatedManualTransaction.setTransactionId( entity.getTransactionId() );
+        manualTransaction.setTransactionId( entity.getTransactionId() );
 
-        generatedManualTransaction.setRegistrationNumber( entity.getRegistrationNumber() );
+        manualTransaction.setRegistrationNumber( entity.getRegistrationNumber() );
 
-        generatedManualTransaction.setDateCreated( entity.getDateCreated() );
+        manualTransaction.setDateCreated( entity.getDateCreated() );
 
-        generatedManualTransaction.setAmountPaid( entity.getAmountPaid() );
+        manualTransaction.setAmountPaid( entity.getAmountPaid() );
 
-        generatedManualTransaction.setDateClaimed( entity.getDateClaimed() );
+        manualTransaction.setDateClaimed( entity.getDateClaimed() );
 
-        generatedManualTransaction.setClaimed( entity.getClaimed() );
+        manualTransaction.setClaimed( entity.getClaimed() );
 
-        generatedManualTransaction.setCreditedAccount( entity.getCreditedAccount() );
+        manualTransaction.setCreditedAccount( entity.getCreditedAccount() );
 
-        generatedManualTransaction.setProcessingMessage( entity.getProcessingMessage() );
+        manualTransaction.setProcessingMessage( entity.getProcessingMessage() );
 
-        generatedManualTransaction.setPaymentId( entity.getPaymentId() == null ? null : jpaPaymentToGeneratedPayment(entity.getPaymentId(),context) );
+        manualTransaction.setBankName( entity.getBankName() );
 
-        generatedManualTransaction.setCreatedByAppUserId( entity.getCreatedByAppUserId() == null ? null : jpaAppUserToGeneratedAppUser(entity.getCreatedByAppUserId(),context) );
+        manualTransaction.setBankTeller( entity.getBankTeller() );
 
-        return generatedManualTransaction;
+        manualTransaction.setDatePaid( entity.getDatePaid() );
+
+        manualTransaction.setPaymentId( entity.getPaymentId() == null ? null : jpaPaymentToGeneratedPayment(entity.getPaymentId(),context) );
+
+        manualTransaction.setCreatedByAppUserId( entity.getCreatedByAppUserId() == null ? null : jpaAppUserToGeneratedAppUser(entity.getCreatedByAppUserId(),context) );
+
+        return manualTransaction;
     }
 
     @Override
 
-    public JpaForm generatedFormToJpaForm(GeneratedForm model, CycleAvoidingMappingContext context) {
+    public JpaForm generatedFormToJpaForm(Form model, CycleAvoidingMappingContext context) {
 
         JpaForm target = context.getMappedInstance( model, JpaForm.class );
 
@@ -670,16 +842,14 @@ public class GeneralMapperImpl implements GeneralMapper {
 
         jpaForm.setModifiedBy( model.getModifiedBy() );
 
-        jpaForm.setJpaFormVersion( model.getJpaFormVersion() == null ? null :  generatedFormVersionToJpaFormVersion(model.getJpaFormVersion(),context) );
-
         return jpaForm;
     }
 
     @Override
 
-    public GeneratedForm jpaFormToGeneratedForm(JpaForm entity, CycleAvoidingMappingContext context) {
+    public Form jpaFormToGeneratedForm(JpaForm entity, CycleAvoidingMappingContext context) {
 
-        GeneratedForm target = context.getMappedInstance( entity, GeneratedForm.class );
+        Form target = context.getMappedInstance( entity, Form.class );
 
         if ( target != null ) {
 
@@ -691,27 +861,25 @@ public class GeneralMapperImpl implements GeneralMapper {
             return null;
         }
 
-        GeneratedForm generatedForm = new GeneratedForm();
+        Form form = new Form();
 
-        context.storeMappedInstance( entity, generatedForm );
+        context.storeMappedInstance( entity, form );
 
-        generatedForm.setFormId( entity.getFormId() );
+        form.setFormId( entity.getFormId() );
 
-        generatedForm.setFormName( entity.getFormName() );
+        form.setFormName( entity.getFormName() );
 
-        generatedForm.setDateCreated( entity.getDateCreated() );
+        form.setDateCreated( entity.getDateCreated() );
 
-        generatedForm.setCreatedBy( entity.getCreatedBy() );
+        form.setCreatedBy( entity.getCreatedBy() );
 
-        generatedForm.setDateModified( entity.getDateModified() );
+        form.setDateModified( entity.getDateModified() );
 
-        generatedForm.setFormDesc( entity.getFormDesc() );
+        form.setFormDesc( entity.getFormDesc() );
 
-        generatedForm.setModifiedBy( entity.getModifiedBy() );
+        form.setModifiedBy( entity.getModifiedBy() );
 
-        generatedForm.setJpaFormVersion( entity.getJpaFormVersion() == null ? null : jpaFormVersionToGeneratedFormVersion(entity.getJpaFormVersion(),context) );
-
-        return generatedForm;
+        return form;
     }
 
     @Override
@@ -743,6 +911,8 @@ public class GeneralMapperImpl implements GeneralMapper {
         jpaApplicationData.setFormData( model.getFormData() );
 
         jpaApplicationData.setXmlFormData( model.getXmlFormData() );
+
+        jpaApplicationData.setFormVersionId( generatedFormVersionToJpaFormVersion( model.getFormVersionId(), context ) );
 
         jpaApplicationData.setJpaAppUser( model.getJpaAppUser() == null ? null :  generatedAppUserToJpaAppUser(model.getJpaAppUser(),context) );
 
@@ -778,6 +948,8 @@ public class GeneralMapperImpl implements GeneralMapper {
         applicationData.setXmlFormData( entity.getXmlFormData() );
 
         applicationData.setFormData( entity.getFormData() );
+
+        applicationData.setFormVersionId( jpaFormVersionToGeneratedFormVersion( entity.getFormVersionId(), context ) );
 
         applicationData.setJpaAppUser( entity.getJpaAppUser() == null ? null : jpaAppUserToGeneratedAppUser(entity.getJpaAppUser(),context) );
 

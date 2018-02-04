@@ -3,12 +3,76 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET    /                 controllers.HomeController.index
 
 
-GET    /positions/        controllers.HomeController.positions(start : String,end: String,_search  ?="false",  filters ?= null,  page: Int ?= 1,  rows ?= null,  sidx : String,  sord : String)
 
+GET        /remitta/instant_callback/                                               controllers.RemittaController.completeInstantOnlineTransaction(RRR:String, orderId:String)
+
+GET        /remitta/batch_callback/                                                 controllers.RemittaController.remittaBatch()
+POST       /remitta/batch_callback/                                                 controllers.RemittaController.remittaBatch()
+
+
+GET        /remitta/initialize_payment/:appUserId/                                  controllers.RemittaController.initializePayment(appUserId: String)
+
+GET        /online_transactions/                                                    controllers.PaymentController.getOnlineTransactions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc")
+
+GET        /manual_transactions/                                                    controllers.PaymentController.getManualTransactions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc")
+
+
+GET        /online_transactions/:onlineTransaction/                                 controllers.PaymentController.getOnlineTransaction(onlineTransaction: String)
+GET        /online_transactions/:onlineTransaction                                  controllers.PaymentController.getOnlineTransaction(onlineTransaction: String)
+
+PUT        /online_transactions/:getOnlineTransaction/retry/                        controllers.PaymentController.retryTransaction(getOnlineTransaction: String)
+
+
+GET        /auth/username_availability/                                             controllers.AuthenticationController.isUsernameAvailable(username: String)
+POST       /auth/login/                                                             controllers.AuthenticationController.loginWithModel()
+POST       /auth/enkento-login/                                                     controllers.AuthenticationController.enkentoLogin(returnUrl: String)
+POST       /auth/sign-up/                                                           controllers.AuthenticationController.signUp()
+PUT        /auth/reset-password/                                                    controllers.AuthenticationController.finalizePasswordRecovery()
+POST       /auth/reset-password/:appUserId/                                         controllers.AuthenticationController.passwordRecovery(appUserId:String)
+
+POST       /users/                                                                  controllers.AppUserController.addAppUser()
+PUT        /users/:appUserId/                                                       controllers.AppUserController.editAppUser(appUserId:String)
+DELETE     /users/:appUserId/                                                       controllers.AppUserController.deleteAppUser(appUserId:String)
+PUT        /users/:appUserId/change_password/                                       controllers.AppUserController.changePassword(appUserId:String)
+GET        /users/                                                                  controllers.AppUserController.getAppUsers(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx : String,sord : String)
+
+
+GET        /applications/                                                           controllers.ApplicationController.getApplications(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx : String,sord ?= "desc")
+
+GET        /form_versions/                                                          controllers.ApplicationController.getFormVersions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc")
+
+DELETE     /form_versions/:form_version_id/                                         controllers.ApplicationController.deleteFormVersion(form_version_id:String)
+
+
+GET        /applications/:application_id/                                           controllers.ApplicationController.getApplicationSummary(application_id:String)
+GET        /applications/:application_id                                            controllers.ApplicationController.getApplicationSummary(application_id:String)
+POST       /forms/:form_id/                                                         controllers.ApplicationController.addFormVersion(form_id:String)
+GET        /users/:appUserId/certificate/                                           controllers.ApplicationController.getCertificate(appUserId:String)
+
+GET        /forms/:formId/offline/static/                                           controllers.ApplicationController.staticUrl(formId : String,returnUrl ?= null, single:Boolean ?= false)
+GET        /forms/:formId/form_versions/offline/                                    controllers.ApplicationController.webForm(formId : String)
+GET        /forms/:formId/form_versions/:formVersionId/offline_edit/:formDataId/    controllers.ApplicationController.webFormForEdit(formId : String,formVersionId : String,formDataId : String, returnUrl ?= null)
+
+GET        /formList                                                                controllers.ApplicationController.formlist(formID : String)
+GET        /submission                                                              controllers.ApplicationController.submissionMaxSize(formID ?= null)
+GET        /submission/                                                             controllers.ApplicationController.submissionMaxSize(formID ?= null)
+GET        /form_versions/:formVersionId/download.xform                             controllers.ApplicationController.downloadXform(formVersionId : String)
+POST       /submission                                                              controllers.ApplicationController.submitFormData()
+
+
+
+#swagger
+GET        /api-docs.json                                                           controllers.ApiHelpController.getResources
+GET        /api-docs.json/auth                                                      controllers.ApiHelpController.getResource(path = "/auth")
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file     controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                                                            controllers.Assets.at(path="/public", file)
 
-GET    /backend/*file    controllers.Assets.versioned(path="/public/backend", file: Asset)
+GET        /                                                                        controllers.HomeController.index
+
+OPTIONS    /*all                                                                    controllers.HomeController.preflight(all)
+
+
+GET        /docs                                                                    controllers.HomeController.swagger()
+GET        /api-docs                                                                controllers.HomeController.api()

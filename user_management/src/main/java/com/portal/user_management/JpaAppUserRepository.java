@@ -18,7 +18,7 @@ import play.db.jpa.JPAApi;
  * @author poseidon
  */
 @Singleton
-class JpaAppUserRepository {
+public class JpaAppUserRepository {
 
     @Inject
     JPAApi provider;

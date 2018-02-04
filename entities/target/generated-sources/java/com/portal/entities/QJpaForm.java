@@ -18,8 +18,6 @@ public class QJpaForm extends EntityPathBase<JpaForm> {
 
     private static final long serialVersionUID = 1205735879L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QJpaForm jpaForm = new QJpaForm("jpaForm");
 
     public final StringPath createdBy = createString("createdBy");
@@ -34,29 +32,20 @@ public class QJpaForm extends EntityPathBase<JpaForm> {
 
     public final StringPath formName = createString("formName");
 
-    public final QJpaFormVersion jpaFormVersion;
+    public final ListPath<JpaFormVersion, QJpaFormVersion> jpaFormVersionList = this.<JpaFormVersion, QJpaFormVersion>createList("jpaFormVersionList", JpaFormVersion.class, QJpaFormVersion.class, PathInits.DIRECT2);
 
     public final StringPath modifiedBy = createString("modifiedBy");
 
     public QJpaForm(String variable) {
-        this(JpaForm.class, forVariable(variable), INITS);
+        super(JpaForm.class, forVariable(variable));
     }
 
     public QJpaForm(Path<? extends JpaForm> path) {
-        this(path.getType(), path.getMetadata(), path.getMetadata().isRoot() ? INITS : PathInits.DEFAULT);
+        super(path.getType(), path.getMetadata());
     }
 
     public QJpaForm(PathMetadata metadata) {
-        this(metadata, metadata.isRoot() ? INITS : PathInits.DEFAULT);
-    }
-
-    public QJpaForm(PathMetadata metadata, PathInits inits) {
-        this(JpaForm.class, metadata, inits);
-    }
-
-    public QJpaForm(Class<? extends JpaForm> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.jpaFormVersion = inits.isInitialized("jpaFormVersion") ? new QJpaFormVersion(forProperty("jpaFormVersion"), inits.get("jpaFormVersion")) : null;
+        super(JpaForm.class, metadata);
     }
 
 }

@@ -1,6 +1,5 @@
 package com.portal.commons.models;
 
-import com.portal.admin.models.ApplicationData;
 import com.portal.entities.JpaAppUser;
 import java.lang.Boolean;
 import java.lang.String;
@@ -19,14 +18,20 @@ import javax.validation.constraints.Size;
 public class AppUser {
 
     public static String getJpaName(JpaAppUser jpaAppUser) {
-      return String.format("%s %s", Objects.toString(jpaAppUser.getFirstName(), ""),  Objects.toString(jpaAppUser.getLastName(), "")).trim();
+        return String.format("%s %s", Objects.toString(jpaAppUser.getFirstName(), ""), Objects.toString(jpaAppUser.getLastName(), "")).trim();
+    }
+    
+    public  String getName() {
+        return String.format("%s %s", Objects.toString(this.firstName, ""), Objects.toString(this.lastName, "")).trim();
     }
 
+    private Date registrationDate;
+
+    private String token;
+
     @Size(
-            max = 64,
-            min = 1
+            max = 64
     )
-    @NotNull
     private String appUserId;
 
     @Size(
@@ -48,11 +53,6 @@ public class AppUser {
     @NotNull
     private String userName;
 
-    @Size(
-            max = 128,
-            min = 1
-    )
-    @NotNull
     private String password;
 
     @Size(
@@ -63,11 +63,6 @@ public class AppUser {
 
     private Date dateCreated;
 
-    @Size(
-            max = 64,
-            min = 1
-    )
-    @NotNull
     private String createdBy;
 
     private Date dateModified;
@@ -78,16 +73,20 @@ public class AppUser {
     )
     private String modifiedBy;
 
-    @Size(
-            max = 64,
-            min = 1
-    )
-    @NotNull
     private String roleName;
 
     private Boolean active;
 
-    private ApplicationData jpaApplicationData;
+    
+
+    public AppUser() {
+    }
+
+    
+    
+    public AppUser(String appUserId) {
+        this.appUserId = appUserId;
+    }
 
     public String getAppUserId() {
         return this.appUserId;
@@ -197,14 +196,7 @@ public class AppUser {
         return null;
     }
 
-    public ApplicationData getJpaApplicationData() {
-        return this.jpaApplicationData;
-    }
-
-    public Void setJpaApplicationData(ApplicationData jpaApplicationData) {
-        this.jpaApplicationData = jpaApplicationData;
-        return null;
-    }
+   
 
     public AppUser appUserId(final String value) {
         this.appUserId = value;
@@ -266,9 +258,22 @@ public class AppUser {
         return this;
     }
 
-    public AppUser jpaApplicationData(final ApplicationData value) {
-        this.jpaApplicationData = value;
-        return this;
+    
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
 }

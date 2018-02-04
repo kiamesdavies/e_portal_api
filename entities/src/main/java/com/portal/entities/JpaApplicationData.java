@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -35,6 +37,19 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "JpaApplicationData.findAll", query = "SELECT j FROM JpaApplicationData j")})
 public class JpaApplicationData implements Serializable {
 
+  
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "form_data", columnDefinition = "json")
+    @Convert(converter = JsonbStringConverter.class)
+    private String formData;
+    @Column(name = "xml_form_data", columnDefinition = "xml")
+    @Convert(converter = XmlStringConverter.class)
+    private String xmlFormData;
+    @JoinColumn(name = "form_version_id", referencedColumnName = "form_version_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private JpaFormVersion formVersionId;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -52,14 +67,6 @@ public class JpaApplicationData implements Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "created_by")
     private String createdBy;
-    @Column(name = "xml_form_data", columnDefinition = "xml")
-    @Convert(converter = XmlStringConverter.class)
-    private String xmlFormData;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "form_data", columnDefinition = "json")
-    @Convert(converter = JsonbStringConverter.class)
-    private String formData;
     @JoinColumn(name = "app_user_id", referencedColumnName = "app_user_id", insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private JpaAppUser jpaAppUser;
@@ -118,7 +125,6 @@ public class JpaApplicationData implements Serializable {
         this.xmlFormData = xmlFormData;
     }
 
-    
     public JpaAppUser getJpaAppUser() {
         return jpaAppUser;
     }
@@ -150,6 +156,15 @@ public class JpaApplicationData implements Serializable {
     @Override
     public String toString() {
         return "com.portal.entities.JpaApplicationData[ appUserId=" + appUserId + " ]";
+    }
+
+  
+    public JpaFormVersion getFormVersionId() {
+        return formVersionId;
+    }
+
+    public void setFormVersionId(JpaFormVersion formVersionId) {
+        this.formVersionId = formVersionId;
     }
 
 }

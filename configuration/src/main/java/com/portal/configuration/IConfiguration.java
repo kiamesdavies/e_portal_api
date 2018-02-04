@@ -23,7 +23,9 @@ public interface IConfiguration {
         DEFAULT_ROLE,
         DEFAULT_PRIVATE_FORMS,
         EMAIL_VERIFICATION_TOKEN_EXPIRY_SECONDS,
-        PLAN_EXPIRY_DATES, PIN_EXPIRY_SECONDS
+        PLAN_EXPIRY_DATES,
+        PIN_EXPIRY_SECONDS,
+        
     }
 
     String getConfiguration(Config configKey) throws ResourceNotFound;

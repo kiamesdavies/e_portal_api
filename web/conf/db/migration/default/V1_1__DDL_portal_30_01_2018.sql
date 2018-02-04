@@ -66,7 +66,7 @@ CREATE TABLE payment (
     expiry_date timestamp with time zone ,
     paid boolean NOT NULL,
     amount_paid double precision NOT NULL,
-    payment_type varying(6) NOT NULL,
+    payment_type character varying(6) NOT NULL,
     PRIMARY KEY (payment_id)
 );
 
@@ -149,7 +149,7 @@ CREATE TABLE pin_request (
     used boolean NOT NULL,
     date_created timestamp with time zone NOT NULL,
     date_used timestamp with time zone,
-    PRIMARY KEY (pin_id,app_user_id)
+    PRIMARY KEY (pin_id)
 );
 
 ALTER TABLE ONLY pin_request
@@ -157,3 +157,9 @@ ALTER TABLE ONLY pin_request
 
 
 
+ALTER TABLE manual_transaction
+    ADD COLUMN receipt character varying(64)  NULL;
+
+
+ALTER TABLE ONLY manual_transaction
+    ADD constraint  manual_transaction_receipt_unique UNIQUE (receipt);

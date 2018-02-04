@@ -35,6 +35,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "JpaOnliePaymentTransactionRawReponse.findAll", query = "SELECT j FROM JpaOnliePaymentTransactionRawReponse j")})
 public class JpaOnliePaymentTransactionRawReponse implements Serializable {
 
+    @NotNull
+    @Column(name = "request_received_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date requestReceivedTime;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -100,6 +105,15 @@ public class JpaOnliePaymentTransactionRawReponse implements Serializable {
         this.dateCreated = dateCreated;
     }
 
+    public Date getRequestReceivedTime() {
+        return requestReceivedTime;
+    }
+
+    public void setRequestReceivedTime(Date requestReceivedTime) {
+        this.requestReceivedTime = requestReceivedTime;
+    }
+
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -124,5 +138,5 @@ public class JpaOnliePaymentTransactionRawReponse implements Serializable {
     public String toString() {
         return "com.portal.entities.JpaOnliePaymentTransactionRawReponse[ rawResponseId=" + rawResponseId + " ]";
     }
-    
+
 }

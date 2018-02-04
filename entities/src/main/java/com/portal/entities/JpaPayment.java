@@ -15,7 +15,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -39,6 +38,29 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "JpaPayment.findAll", query = "SELECT j FROM JpaPayment j")})
 public class JpaPayment implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "payment_type")
+    private String paymentType;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "amount_to_pay")
+    private double amountToPay;
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private JpaCategory categoryId;
+
+    @Size(max = 128)
+    @Column(name = "certificate_path")
+    private String certificatePath;
+
+    @Size(max = 128)
+    @Column(name = "bank_name")
+    private String bankName;
+    @Size(max = 128)
+    @Column(name = "bank_teller")
+    private String bankTeller;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -61,15 +83,8 @@ public class JpaPayment implements Serializable {
     @NotNull
     @Column(name = "paid")
     private boolean paid;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "amount_paid")
-    private double amountPaid;
-    @Basic(optional = false)
-    @NotNull
-    @Size(max=6)
-    @Column(name = "payment_type")
-    private String paymentType;
+    private Double amountPaid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paymentId", fetch = FetchType.LAZY)
     private List<JpaOnlineTransaction> jpaOnlineTransactionList;
     @OneToMany(mappedBy = "paymentId", fetch = FetchType.LAZY)
@@ -85,11 +100,11 @@ public class JpaPayment implements Serializable {
         this.paymentId = paymentId;
     }
 
-    public JpaPayment(String paymentId, Date dateInitialized, boolean paid, double amountPaid, String paymentType) {
+    public JpaPayment(String paymentId, Date dateInitialized, boolean paid, double amountToPay, String paymentType) {
         this.paymentId = paymentId;
         this.dateInitialized = dateInitialized;
         this.paid = paid;
-        this.amountPaid = amountPaid;
+        this.amountToPay = amountToPay;
         this.paymentType = paymentType;
     }
 
@@ -133,11 +148,11 @@ public class JpaPayment implements Serializable {
         this.paid = paid;
     }
 
-    public double getAmountPaid() {
+    public Double getAmountPaid() {
         return amountPaid;
     }
 
-    public void setAmountPaid(double amountPaid) {
+    public void setAmountPaid(Double amountPaid) {
         this.amountPaid = amountPaid;
     }
 
@@ -199,5 +214,46 @@ public class JpaPayment implements Serializable {
     public String toString() {
         return "com.portal.entities.JpaPayment[ paymentId=" + paymentId + " ]";
     }
-    
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getBankTeller() {
+        return bankTeller;
+    }
+
+    public void setBankTeller(String bankTeller) {
+        this.bankTeller = bankTeller;
+    }
+
+    public String getCertificatePath() {
+        return certificatePath;
+    }
+
+    public void setCertificatePath(String certificatePath) {
+        this.certificatePath = certificatePath;
+    }
+
+   
+    public double getAmountToPay() {
+        return amountToPay;
+    }
+
+    public void setAmountToPay(double amountToPay) {
+        this.amountToPay = amountToPay;
+    }
+
+    public JpaCategory getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(JpaCategory categoryId) {
+        this.categoryId = categoryId;
+    }
+
 }

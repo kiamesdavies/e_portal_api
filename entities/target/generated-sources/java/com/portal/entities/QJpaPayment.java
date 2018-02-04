@@ -24,7 +24,17 @@ public class QJpaPayment extends EntityPathBase<JpaPayment> {
 
     public final NumberPath<Double> amountPaid = createNumber("amountPaid", Double.class);
 
+    public final NumberPath<Double> amountToPay = createNumber("amountToPay", Double.class);
+
     public final QJpaAppUser appUserId;
+
+    public final StringPath bankName = createString("bankName");
+
+    public final StringPath bankTeller = createString("bankTeller");
+
+    public final QJpaCategory categoryId;
+
+    public final StringPath certificatePath = createString("certificatePath");
 
     public final DateTimePath<java.util.Date> dateInitialized = createDateTime("dateInitialized", java.util.Date.class);
 
@@ -61,6 +71,7 @@ public class QJpaPayment extends EntityPathBase<JpaPayment> {
     public QJpaPayment(Class<? extends JpaPayment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.appUserId = inits.isInitialized("appUserId") ? new QJpaAppUser(forProperty("appUserId"), inits.get("appUserId")) : null;
+        this.categoryId = inits.isInitialized("categoryId") ? new QJpaCategory(forProperty("categoryId")) : null;
     }
 
 }

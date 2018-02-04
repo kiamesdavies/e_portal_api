@@ -24,6 +24,10 @@ public class QJpaManualTransaction extends EntityPathBase<JpaManualTransaction> 
 
     public final NumberPath<Double> amountPaid = createNumber("amountPaid", Double.class);
 
+    public final StringPath bankName = createString("bankName");
+
+    public final StringPath bankTeller = createString("bankTeller");
+
     public final BooleanPath claimed = createBoolean("claimed");
 
     public final QJpaAppUser createdByAppUserId;
@@ -34,9 +38,13 @@ public class QJpaManualTransaction extends EntityPathBase<JpaManualTransaction> 
 
     public final DateTimePath<java.util.Date> dateCreated = createDateTime("dateCreated", java.util.Date.class);
 
+    public final DateTimePath<java.util.Date> datePaid = createDateTime("datePaid", java.util.Date.class);
+
     public final QJpaPayment paymentId;
 
     public final StringPath processingMessage = createString("processingMessage");
+
+    public final StringPath receipt = createString("receipt");
 
     public final StringPath registrationNumber = createString("registrationNumber");
 

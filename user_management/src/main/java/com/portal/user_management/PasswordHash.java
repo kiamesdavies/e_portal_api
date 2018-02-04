@@ -1,4 +1,4 @@
-package com.encentral.tattara.usermanagement.impl;
+package com.portal.user_management;
 /*
  * Password Hashing With PBKDF2 (http://crackstation.net/hashing-security.htm).
  * Copyright (c) 2013, Taylor Hornby
@@ -208,7 +208,7 @@ public final class PasswordHash
     {
         try
         {
-	    System.out.println(createHash("Eiagc123!"));
+	    System.out.println(createHash("Tarti213!"));
             // Print out 10 hashes
             for(int i = 0; i < 10; i++)
                 System.out.println(PasswordHash.createHash("jamesniranye"));

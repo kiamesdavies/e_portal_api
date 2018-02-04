@@ -34,6 +34,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "JpaOnlineTransaction.findAll", query = "SELECT j FROM JpaOnlineTransaction j")})
 public class JpaOnlineTransaction implements Serializable {
 
+    @Size(max = 64)
+    @Column(name = "rrr")
+    private String rrr;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -186,6 +190,14 @@ public class JpaOnlineTransaction implements Serializable {
     @Override
     public String toString() {
         return "com.portal.entities.JpaOnlineTransaction[ transactionId=" + transactionId + " ]";
+    }
+
+    public String getRrr() {
+        return rrr;
+    }
+
+    public void setRrr(String rrr) {
+        this.rrr = rrr;
     }
     
 }
