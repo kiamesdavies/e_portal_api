@@ -18,15 +18,13 @@ public interface IMessageTemplate {
 
     static enum MessageType {
 
-        PASSWORD_RECOVERY,
-        INSIGHT_INVITATION,
-        INVITATION,
-        INVITATION_NEW_USER,
-        EMAIL_VERIFICATION,
-        INVOICE_PAYMENT,
-        COLLABORATOR_INVITATION, 
-        MOBILE_PIN_RESET,
-        CERTICIATE
+        PIN_RESET,
+        CERTICIATE,
+        PAYMENT_CLAIMED,
+        
+        EXPIRED_PAYMENT,
+        
+        PAYMENT_RENEWAL_STARTED
 
     }
 

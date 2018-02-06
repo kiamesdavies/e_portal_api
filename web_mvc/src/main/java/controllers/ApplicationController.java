@@ -6,9 +6,15 @@
 package controllers;
 
 import akka.actor.ActorSystem;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.markserrano.jsonquery.jpa.response.JqgridResponse;
 import com.goebl.david.Webb;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.opencsv.CSVWriter;
 import com.portal.applications.ApplicationManager;
 import io.swagger.annotations.Api;
 import com.portal.commons.exceptions.ResourceNotFound;
@@ -45,11 +51,15 @@ import security.Auth;
 import io.swagger.annotations.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -58,8 +68,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import play.db.jpa.JPAApi;
+import play.libs.Json;
 import play.libs.ws.WSClient;
-
+import play.Play;
 import security.AppAuthenticator;
 
 /**
@@ -97,6 +109,9 @@ public class ApplicationController extends Controller {
     @Inject
     private Helper helper;
 
+    
+    
+
     private static final String SEPERATOR = "---";
 
     private static final Function<String, String> GET_REAL_FORMVERSIONID = (formVersionId) -> {
@@ -105,8 +120,39 @@ public class ApplicationController extends Controller {
         }
         return formVersionId;
     };
+    private static final Function<String, Pair<String, String>> GET_APPUSERID_AND_FORMVERSIONID = (formVersionId) -> {
+        String[] split = formVersionId.split(SEPERATOR);
+        return Pair.with(split[0], split[1]);
+    };
 
-    @ApiOperation(value = "Return inputstream of the key, specify toFileName to have the file saved in the specified name",
+    @ApiOperation(value = "Get Manual template",
+            httpMethod = "GET")
+    @ApiResponses(
+            value = {
+                @ApiResponse(code = 200, message = "Returns an inputstream", response = FileInputStream.class)
+            }
+    )
+    public Result getManualTemplate() throws UnsupportedEncodingException {
+        response().setHeader("Content-Type", "application/octet-stream");
+        response().setHeader("Content-Disposition", "attachment; filename=\"" + MimeUtility.encodeWord("template.csv") + "\"");
+
+        return ok(Play.application().resourceAsStream("template.csv"));
+
+    }
+
+    @ApiOperation(value = "Get Dashboard",
+            httpMethod = "GET")
+    @ApiResponses(
+            value = {
+                @ApiResponse(code = 200, message = "Returns an dashboard")
+            }
+    )
+    public Result getDashboard() throws JsonProcessingException {
+        return ok(objectMapper.writeValueAsString(applicationManager.getDashboard()));
+
+    }
+
+    @ApiOperation(value = "Get certificate",
             httpMethod = "GET")
     @ApiResponses(
             value = {
@@ -122,7 +168,7 @@ public class ApplicationController extends Controller {
             }
             response().setHeader("Content-Type", "application/octet-stream");
             response().setHeader("Content-Disposition", "attachment; filename=\"" + MimeUtility.encodeWord("certificate.pdf") + "\"");
-            response().setHeader("Cache-Control", "public, max-age=31536000");
+
             return ok(new FileInputStream(new File(certificate)));
         } catch (ResourceNotFound | FileNotFoundException | UnsupportedEncodingException e) {
             return badRequest(e.getMessage());
@@ -150,11 +196,38 @@ public class ApplicationController extends Controller {
     )
 
     @Auth(roles = {AuthorizationRole.ADMIN, AuthorizationRole.ACCOUNT, AuthorizationRole.OPERATIONS})
-    public Result getApplications(Boolean search, String filters, Integer page, Integer rows, String sidx, String sord) {
+    public Result getApplications(Boolean search, String filters, Integer page, Integer rows, String sidx, String sord, Boolean export) {
 
         try {
 
-            return ok(objectMapper.writeValueAsString(applicationManager.getApplications(search, filters, page, rows, sidx, sord))).as("application/json");
+            JqgridResponse<ApplicationSummary> applicationListResponse = applicationManager.getApplications(search, filters, page, rows, sidx, sord);
+            if (export != false && export) {
+
+                String filePath = "exportedCSV/" + RandomStringUtils.randomAlphanumeric(10) + ".csv";
+
+                new File(EnvironMentVariables.STORAGE_PATH + filePath).getParentFile().mkdirs();
+                try (CSVWriter writer = new CSVWriter(new FileWriter(EnvironMentVariables.STORAGE_PATH + filePath))) {
+                    applicationListResponse.getRows().stream().forEach(a -> {
+
+                        Map<String, Object> map = objectMapper.convertValue(a, new TypeReference<Map<String, Object>>() {
+                        });
+
+                        if (applicationListResponse.getRows().indexOf(a) == 0) {
+                            Set<String> headerSet = map.keySet();
+                            writer.writeNext(headerSet.toArray(new String[headerSet.size()]));
+                        }
+
+                        Collection<Object> values = map.values();
+
+                        writer.writeNext(values.stream().map(f -> Objects.toString(f, "")).collect(Collectors.toList()).toArray(new String[values.size()]));
+
+                    });
+                }
+                response().setHeader("Content-Type", "application/octet-stream");
+                response().setHeader("Content-Disposition", "attachment; filename=\"" + MimeUtility.encodeWord("export.csv") + "\"");
+                return ok(new FileInputStream(new File(EnvironMentVariables.STORAGE_PATH + filePath)));
+            }
+            return ok(objectMapper.writeValueAsString(ImmutableMap.of("data", applicationListResponse))).as("application/json");
         } catch (Exception ex) {
             ex.printStackTrace();
             return badRequest(ex.getMessage());
@@ -181,11 +254,38 @@ public class ApplicationController extends Controller {
     )
 
     @Auth(roles = {AuthorizationRole.ADMIN})
-    public Result getFormVersions(Boolean search, String filters, Integer page, Integer rows, String sidx, String sord) {
+    public Result getFormVersions(Boolean search, String filters, Integer page, Integer rows, String sidx, String sord, Boolean export) {
 
         try {
 
-            return ok(objectMapper.writeValueAsString(applicationManager.getFormVersions(search, filters, page, rows, sidx, sord))).as("application/json");
+            JqgridResponse<FormVersion> applicationListResponse = applicationManager.getFormVersions(search, filters, page, rows, sidx, sord);
+            if (export != false && export) {
+
+                String filePath = "exportedCSV/" + RandomStringUtils.randomAlphanumeric(10) + ".csv";
+
+                new File(EnvironMentVariables.STORAGE_PATH + filePath).getParentFile().mkdirs();
+                try (CSVWriter writer = new CSVWriter(new FileWriter(EnvironMentVariables.STORAGE_PATH + filePath))) {
+                    applicationListResponse.getRows().stream().forEach(a -> {
+
+                        Map<String, Object> map = objectMapper.convertValue(a, new TypeReference<Map<String, Object>>() {
+                        });
+
+                        if (applicationListResponse.getRows().indexOf(a) == 0) {
+                            Set<String> headerSet = map.keySet();
+                            writer.writeNext(headerSet.toArray(new String[headerSet.size()]));
+                        }
+
+                        Collection<Object> values = map.values();
+
+                        writer.writeNext(values.stream().map(f -> Objects.toString(f, "")).collect(Collectors.toList()).toArray(new String[values.size()]));
+
+                    });
+                }
+                response().setHeader("Content-Type", "application/octet-stream");
+                response().setHeader("Content-Disposition", "attachment; filename=\"" + MimeUtility.encodeWord("export.csv") + "\"");
+                return ok(new FileInputStream(new File(EnvironMentVariables.STORAGE_PATH + filePath)));
+            }
+            return ok(objectMapper.writeValueAsString(ImmutableMap.of("data", applicationListResponse))).as("application/json");
         } catch (Exception ex) {
             ex.printStackTrace();
             return badRequest(ex.getMessage());
@@ -350,7 +450,7 @@ public class ApplicationController extends Controller {
             }
     )
     @Auth
-    public Result staticUrl(String formId, String returnUrl, Boolean single) throws JSONException, ResourceNotFound {
+    public Result staticUrl(String formId, String returnUrl, Boolean single, String appUserId) throws JSONException, ResourceNotFound {
 
         AppUser appUser = AppAuthenticator.getAppUser();
 
@@ -359,8 +459,10 @@ public class ApplicationController extends Controller {
         if (single) {
             if (appUser.getRoleName().equalsIgnoreCase("TEACHER")) {
                 formVersionId = String.format("%s%s%s", appUser.getAppUserId(), SEPERATOR, formVersionId);
+            } else if (StringUtils.isBlank(appUserId)) {
+                return badRequest("No appUserId");
             } else {
-                formVersionId = String.format("%s%s%s", RandomStringUtils.randomAlphanumeric(10), SEPERATOR, formVersionId);
+                formVersionId = String.format("%s%s%s", appUserId, SEPERATOR, formVersionId);
             }
         }
 
@@ -373,30 +475,29 @@ public class ApplicationController extends Controller {
         return redirect((single ? result.get("single_once_url").toString() : result.get("offline_url").toString()).replaceAll("https:", "http:"));
     }
 
-    @ApiOperation(value = "Return offline link to capture data",
-            httpMethod = "GET")
-    @ApiResponses(
-            value = {
-                @ApiResponse(code = 200, message = "Done", response = String.class)
-            }
-    )
-    @Auth
-    public Result webForm(String formId) throws JSONException, ResourceNotFound {
-
-        String formVersionId = applicationManager.getLastestFormVersion(formId).getFormVersionId();
-        JSONObject result = webb.post(Helper.ENKETO_SEVER_URL + "/api/v2/survey/offline").header("Authorization", EnvironMentVariables.ENKETO_SERVER_TOKEN).param("server_url", Helper.API_SEVER_URL).param("form_id", formVersionId).ensureSuccess().asJsonObject().getBody();
-
-        return ok(result.get("offline_url").toString().replaceAll("https:", "http:"));
-    }
-
-    @ApiOperation(value = "Return offline link to edit form data ",
-            httpMethod = "GET")
-    @ApiResponses(
-            value = {
-                @ApiResponse(code = 200, message = "Done", response = String.class)
-            }
-    )
-
+//    @ApiOperation(value = "Return offline link to capture data",
+//            httpMethod = "GET")
+//    @ApiResponses(
+//            value = {
+//                @ApiResponse(code = 200, message = "Done", response = String.class)
+//            }
+//    )
+//    @Auth
+//    public Result webForm(String formId) throws JSONException, ResourceNotFound {
+//
+//        String formVersionId = applicationManager.getLastestFormVersion(formId).getFormVersionId();
+//        JSONObject result = webb.post(Helper.ENKETO_SEVER_URL + "/api/v2/survey/offline").header("Authorization", EnvironMentVariables.ENKETO_SERVER_TOKEN).param("server_url", Helper.API_SEVER_URL).param("form_id", formVersionId).ensureSuccess().asJsonObject().getBody();
+//
+//        return ok(result.get("offline_url").toString().replaceAll("https:", "http:"));
+//    }
+//
+//    @ApiOperation(value = "Return offline link to edit form data ",
+//            httpMethod = "GET")
+//    @ApiResponses(
+//            value = {
+//                @ApiResponse(code = 200, message = "Done", response = String.class)
+//            }
+//    )
     public Result webFormForEdit(String formId, String formVersionId, String formDataId, String returnUrl) throws IOException, JSONException {
         try {
 
@@ -451,8 +552,8 @@ public class ApplicationController extends Controller {
     public Result downloadXform(String formVersionId) {
 
         try {
-
-            return ok(applicationManager.getFormVersion(GET_REAL_FORMVERSIONID.apply(formVersionId)).getXformStructure()).as("application/xml");
+            System.out.println("Replace with " + formVersionId);
+            return ok(applicationManager.getFormVersion(GET_REAL_FORMVERSIONID.apply(formVersionId)).getXformStructure().replaceAll(GET_REAL_FORMVERSIONID.apply(formVersionId), formVersionId)).as("application/xml");
         } catch (ResourceNotFound resourceNotFound) {
             return notFound(resourceNotFound.getMessage());
         }
@@ -475,16 +576,15 @@ public class ApplicationController extends Controller {
             String md5;
             String name;
             String descriptionText;
-            String version;
+
             FormVersion formVersion = applicationManager.getFormVersion(GET_REAL_FORMVERSIONID.apply(formIdVersionId));
             downloadUrl = String.format("%s/form_versions/%s/download.xform", Helper.API_SEVER_URL, formIdVersionId);
             md5 = Utility.generateMD5(formVersion.getXformStructure());
 
             name = formVersion.getFormId().getFormName();
             descriptionText = formVersion.getFormId().getFormDesc() == null ? formVersion.getFormId().getFormName() : formVersion.getFormId().getFormDesc();
-            version = formIdVersionId;
 
-            return ok(String.format("<xforms xmlns=\"http://openrosa.org/xforms/xformsList\"> <xform> <formID>%s</formID> <name>%s</name> <version>%s</version> <hash>%s</hash> <descriptionText>%s</descriptionText> <downloadUrl>%s</downloadUrl> </xform> </xforms>", formIdVersionId, name, version, md5, descriptionText, downloadUrl)).as("application/xml");
+            return ok(String.format("<xforms xmlns=\"http://openrosa.org/xforms/xformsList\"> <xform> <formID>%s</formID> <name>%s</name> <version>%s</version> <hash>%s</hash> <descriptionText>%s</descriptionText> <downloadUrl>%s</downloadUrl> </xform> </xforms>", formIdVersionId, name, formIdVersionId, md5, descriptionText, downloadUrl)).as("application/xml");
         } catch (ResourceNotFound resourceNotFound) {
             return notFound(resourceNotFound.getMessage());
         }
@@ -510,7 +610,7 @@ public class ApplicationController extends Controller {
             }
     )
     @BodyParser.Of(value = BodyParser.MultipartFormData.class)
-    @Auth
+
     public Result submitFormData() {
         try {
 
@@ -536,28 +636,30 @@ public class ApplicationController extends Controller {
                 ((ObjectNode) root).put("form_no", RandomStringUtils.random(6));
                 String data = objectMapper.writeValueAsString(root);
                 String formVersionId = null;
-
+                String appUserId = null;
                 if (root.has("version")) {
-                    formVersionId = root.get("version").asText();
+                    Pair<String, String> pair = GET_APPUSERID_AND_FORMVERSIONID.apply(root.get("version").asText());
+                    appUserId = pair.getValue0();
+                    formVersionId = pair.getValue1();
                 } else if (root.has("-version")) {
-                    formVersionId = root.get("-version").asText();
+                    Pair<String, String> pair = GET_APPUSERID_AND_FORMVERSIONID.apply(root.get("-version").asText());
+                    appUserId = pair.getValue0();
+                    formVersionId = pair.getValue1();
                 } else {
                     return notFound("Version Id not found");
                 }
 
-                formVersionId = GET_REAL_FORMVERSIONID.apply(formVersionId);
-
-                String appUserId = AppAuthenticator.getAppUser().getAppUserId();
-
-                if (root.has("teacher_registration_number")) {
+                if (root.has("login_details")) {
                     AppUser appUser = new AppUser();
-                    appUser.setUserName(root.get("teacher_registration_number").asText());
-                    appUser.setFirstName(root.get("first_name").asText());
-                    appUser.setLastName(root.get("surname").asText());
-                    appUser.setMobileNumber(root.get("mobile_number").asText());
-                    appUser.setPassword(root.get("password").asText());
+                    appUser.setAppUserId(appUserId);
+                    appUser.setUserName(root.get("login_details").get("teacher_registration_number").asText());
+                    appUser.setPassword(root.get("login_details").get("password").asText());
+                    appUser.setRoleName(AuthorizationRole.TEACHER.name());
+                    appUser.setFirstName(root.get("personal_information").get("first_name").asText());
+                    appUser.setLastName(root.get("personal_information").get("surname").asText());
+                    appUser.setMobileNumber(root.get("personal_information").get("mobile_number").asText());
 
-                    appUserId = appUserManager.addAppUser(appUser).getAppUserId();
+                    appUserManager.addAppUser(appUser);
                 }
 
                 applicationManager.addApplicationData(appUserId, formVersionId, xmlData, data, attatchements);

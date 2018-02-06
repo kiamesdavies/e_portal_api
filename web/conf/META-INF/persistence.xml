@@ -17,8 +17,13 @@
         <class>com.portal.entities.JpaAppConfig</class>
         <class>com.portal.entities.JpaMessageTemplate</class>
         <class>com.portal.entities.JpaPinRequest</class>
-         <class>com.portal.entities.JpaApplicationSummary</class>
-         <class>com.portal.entities.JpaCategory</class>
+        <class>com.portal.entities.JpaApplicationSummary</class>
+        <class>com.portal.entities.JpaCategory</class>
+        <class>com.portal.entities.JpaApplicationDashboard</class>
+        <class>com.portal.entities.JpaApplicationCount</class>
+        <class>com.portal.entities.JpaOnlineTransactionView</class>
+        <class>com.portal.entities.JpaManualTransactionView</class>
+        <class>com.portal.entities.JpaSmsLog</class>
         <properties>
             <!--	    <property name="eclipselink.cache.shared.default" value="true"/>-->
            

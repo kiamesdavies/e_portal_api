@@ -9,6 +9,8 @@ import com.github.markserrano.jsonquery.jpa.service.FilterService;
 import com.github.markserrano.jsonquery.jpa.service.IFilterService;
 import com.goebl.david.Webb;
 import com.google.inject.AbstractModule;
+import com.portal.actors.CronJob;
+import com.portal.actors.JackOfAllTrade;
 import com.portal.applications.ApplicationManager;
 import com.portal.configuration.IConfiguration;
 import com.portal.configuration.IMessageTemplate;
@@ -27,8 +29,6 @@ import play.libs.akka.AkkaGuiceSupport;
  */
 public class Module extends AbstractModule implements AkkaGuiceSupport {
 
-    
-    
     @Override
     protected void configure() {
         bind(Authentication.class);
@@ -43,6 +43,15 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
 
         Webb webb = Webb.create();
         bind(Webb.class).toInstance(webb);
+
+        bindActor(CronJob.class, "paymentGenerator");
+        bindActorFactory(CronJob.CronJobWorker.class, CronJob.CronJobWorker.Factory.class);
+
+        bindActor(JackOfAllTrade.class, "jackOfAllTrade");
+        bindActorFactory(JackOfAllTrade.JackOfAllTradeWorker.class, JackOfAllTrade.JackOfAllTradeWorker.Factory.class);
+        
+        
+         bind(Genesis.class).asEagerSingleton();
     }
 
 }

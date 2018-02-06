@@ -13,7 +13,6 @@ import java.util.Date;
  */
 public class ApplicationSummary {
 
-    
     private String paymentId;
     private String qualificationsWithDate;
     private String appUserId;
@@ -311,5 +310,4 @@ public class ApplicationSummary {
         this.paymentId = paymentId;
     }
 
-    
 }

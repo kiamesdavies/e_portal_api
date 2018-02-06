@@ -78,7 +78,7 @@ public class RemittaController extends Controller {
             //hash format merchantId+serviceTypeId+orderId+amount+responseurl+api_key
             String hash = PaymentManager.generateHashedStringSHA512(EnvironMentVariables.REMITTA_MERCHANTID + EnvironMentVariables.REMITTA_SERVICETYPEID + onlineTransaction.getTransactionId() + onlineTransaction.getAmountToPay() + responseUrl + EnvironMentVariables.REMITTA_APIKEY);
 
-            return ok(String.format(PAYMENT_HTML, EnvironMentVariables.REMITTA_MERCHANTID, EnvironMentVariables.REMITTA_SERVICETYPEID, onlineTransaction.getTransactionId(), hash, appUser.getName(), appUser.getMobileNumber(), onlineTransaction.getAmountToPay() + "", responseUrl)).as("text/html");
+            return ok(String.format(PAYMENT_HTML, EnvironMentVariables.REMITTA_MERCHANTID, EnvironMentVariables.REMITTA_SERVICETYPEID, onlineTransaction.getTransactionId(), hash, appUser.getName(), appUser.getMobileNumber(), appUser.getMobileNumber(), onlineTransaction.getAmountToPay() + "", responseUrl)).as("text/html");
         } catch (ResourceNotFound ex) {
             return notFound(ex.getMessage());
         }
@@ -105,7 +105,7 @@ public class RemittaController extends Controller {
             return fn;
         });
 
-        return event.thenApply(i -> redirect(String.format("%s/main.html#payment/%s", EnvironMentVariables.APP_SERVER_URL, orderId)));
+        return event.thenApply(i -> redirect(String.format("%s#payment/%s", EnvironMentVariables.APP_SERVER_URL, orderId)));
 
     }
 
@@ -160,6 +160,7 @@ public class RemittaController extends Controller {
             + "                  <input name=\"hash\" value=\"%s\" type=\"hidden\">\n"
             + "                  <input name=\"payerName\" value=\"%s\" type=\"hidden\">\n"
             + "                  <input name=\"payerEmail\" value=\"%s\" type=\"hidden\">\n"
+            + "                  <input name=\"payerPhone\" value=\"%s\" type=\"hidden\">\n"
             + "                  <input name=\"amt\" value=\"%s\" type=\"hidden\">\n"
             + "                  <input name=\"responseurl\" value=\"%s\" type=\"hidden\">\n"
             + "                  <input type =\"submit\" name=\"submit_btn\" >\n"

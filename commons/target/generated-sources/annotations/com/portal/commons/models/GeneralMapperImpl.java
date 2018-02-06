@@ -6,6 +6,10 @@ import com.portal.entities.JpaAppConfig;
 
 import com.portal.entities.JpaAppUser;
 
+import com.portal.entities.JpaApplicationCount;
+
+import com.portal.entities.JpaApplicationDashboard;
+
 import com.portal.entities.JpaApplicationData;
 
 import com.portal.entities.JpaApplicationSummary;
@@ -18,13 +22,19 @@ import com.portal.entities.JpaFormVersion;
 
 import com.portal.entities.JpaManualTransaction;
 
+import com.portal.entities.JpaManualTransactionView;
+
 import com.portal.entities.JpaMessageTemplate;
 
 import com.portal.entities.JpaOnliePaymentTransactionRawReponse;
 
 import com.portal.entities.JpaOnlineTransaction;
 
+import com.portal.entities.JpaOnlineTransactionView;
+
 import com.portal.entities.JpaPayment;
+
+import com.portal.entities.JpaSmsLog;
 
 import javax.annotation.Generated;
 
@@ -32,13 +42,193 @@ import javax.annotation.Generated;
 
     value = "org.mapstruct.ap.MappingProcessor",
 
-    date = "2018-02-05T00:19:54+0100",
+    date = "2018-02-06T12:19:27+0100",
 
     comments = "version: 1.2.0.Beta2, compiler: javac, environment: Java 1.8.0_151 (Oracle Corporation)"
 
 )
 
 public class GeneralMapperImpl implements GeneralMapper {
+
+    @Override
+
+    public SmsLog jpaSmsLogToSmsLog(JpaSmsLog jpaSmsLog) {
+
+        if ( jpaSmsLog == null ) {
+
+            return null;
+        }
+
+        SmsLog smsLog = new SmsLog();
+
+        smsLog.setSmsLogId( jpaSmsLog.getSmsLogId() );
+
+        smsLog.setSubject( jpaSmsLog.getSubject() );
+
+        smsLog.setStatus( jpaSmsLog.getStatus() );
+
+        smsLog.setBody( jpaSmsLog.getBody() );
+
+        smsLog.setDateCreated( jpaSmsLog.getDateCreated() );
+
+        return smsLog;
+    }
+
+    @Override
+
+    public ManualTransactionView jpaManualTransactionViewToManualTransactionView(JpaManualTransactionView jmtv) {
+
+        if ( jmtv == null ) {
+
+            return null;
+        }
+
+        ManualTransactionView manualTransactionView = new ManualTransactionView();
+
+        manualTransactionView.setTransactionId( jmtv.getTransactionId() );
+
+        manualTransactionView.setRegistrationNumber( jmtv.getRegistrationNumber() );
+
+        manualTransactionView.setPaymentId( jmtv.getPaymentId() );
+
+        manualTransactionView.setDateCreated( jmtv.getDateCreated() );
+
+        manualTransactionView.setCreatedByAppUserId( jmtv.getCreatedByAppUserId() );
+
+        manualTransactionView.setAmountPaid( jmtv.getAmountPaid() );
+
+        manualTransactionView.setDateClaimed( jmtv.getDateClaimed() );
+
+        manualTransactionView.setClaimed( jmtv.getClaimed() );
+
+        manualTransactionView.setCreditedAccount( jmtv.getCreditedAccount() );
+
+        manualTransactionView.setProcessingMessage( jmtv.getProcessingMessage() );
+
+        manualTransactionView.setReceipt( jmtv.getReceipt() );
+
+        manualTransactionView.setBankName( jmtv.getBankName() );
+
+        manualTransactionView.setBankTeller( jmtv.getBankTeller() );
+
+        manualTransactionView.setDatePaid( jmtv.getDatePaid() );
+
+        manualTransactionView.setAppUserId( jmtv.getAppUserId() );
+
+        manualTransactionView.setDateInitialized( jmtv.getDateInitialized() );
+
+        manualTransactionView.setExpiryDate( jmtv.getExpiryDate() );
+
+        manualTransactionView.setPaid( jmtv.getPaid() );
+
+        manualTransactionView.setCategoryId( jmtv.getCategoryId() );
+
+        manualTransactionView.setFirstName( jmtv.getFirstName() );
+
+        manualTransactionView.setLastName( jmtv.getLastName() );
+
+        manualTransactionView.setTeacherRegNumber( jmtv.getTeacherRegNumber() );
+
+        manualTransactionView.setMobileNumber( jmtv.getMobileNumber() );
+
+        manualTransactionView.setRegistrationDate( jmtv.getRegistrationDate() );
+
+        return manualTransactionView;
+    }
+
+    @Override
+
+    public OnlineTransactionView jpaOnlineTransactionViewToOnlineTransactionView(JpaOnlineTransactionView jotv) {
+
+        if ( jotv == null ) {
+
+            return null;
+        }
+
+        OnlineTransactionView onlineTransactionView = new OnlineTransactionView();
+
+        onlineTransactionView.setTransactionId( jotv.getTransactionId() );
+
+        onlineTransactionView.setPaymentId( jotv.getPaymentId() );
+
+        onlineTransactionView.setDateInitialized( jotv.getDateInitialized() );
+
+        onlineTransactionView.setAmountToPay( jotv.getAmountToPay() );
+
+        onlineTransactionView.setAmountPaid( jotv.getAmountPaid() );
+
+        onlineTransactionView.setDatePayed( jotv.getDatePayed() );
+
+        onlineTransactionView.setSucessful( jotv.getSucessful() );
+
+        onlineTransactionView.setCreditedAccount( jotv.getCreditedAccount() );
+
+        onlineTransactionView.setResponseMessage( jotv.getResponseMessage() );
+
+        onlineTransactionView.setResponseCode( jotv.getResponseCode() );
+
+        onlineTransactionView.setRrr( jotv.getRrr() );
+
+        onlineTransactionView.setAppUserId( jotv.getAppUserId() );
+
+        onlineTransactionView.setExpiryDate( jotv.getExpiryDate() );
+
+        onlineTransactionView.setPaid( jotv.getPaid() );
+
+        onlineTransactionView.setCategoryId( jotv.getCategoryId() );
+
+        onlineTransactionView.setFirstName( jotv.getFirstName() );
+
+        onlineTransactionView.setLastName( jotv.getLastName() );
+
+        onlineTransactionView.setTeacherRegNumber( jotv.getTeacherRegNumber() );
+
+        onlineTransactionView.setMobileNumber( jotv.getMobileNumber() );
+
+        onlineTransactionView.setRegistrationDate( jotv.getRegistrationDate() );
+
+        return onlineTransactionView;
+    }
+
+    @Override
+
+    public ApplicationDashboard jpaApplicationDashboardToApplicationDashboard(JpaApplicationDashboard applicationDashboard) {
+
+        if ( applicationDashboard == null ) {
+
+            return null;
+        }
+
+        ApplicationDashboard applicationDashboard1 = new ApplicationDashboard();
+
+        applicationDashboard1.setDateRange( applicationDashboard.getDateRange() );
+
+        applicationDashboard1.setCount( applicationDashboard.getCount() );
+
+        applicationDashboard1.setTotalAmountPaid( applicationDashboard.getTotalAmountPaid() );
+
+        return applicationDashboard1;
+    }
+
+    @Override
+
+    public ApplicationCount jpaApplicationCountToApplicationCount(JpaApplicationCount applicationCount) {
+
+        if ( applicationCount == null ) {
+
+            return null;
+        }
+
+        ApplicationCount applicationCount1 = new ApplicationCount();
+
+        applicationCount1.setCount( applicationCount.getCount() );
+
+        applicationCount1.setAllPaid( applicationCount.getAllPaid() );
+
+        applicationCount1.setTotalAmountPaid( applicationCount.getTotalAmountPaid() );
+
+        return applicationCount1;
+    }
 
     @Override
 

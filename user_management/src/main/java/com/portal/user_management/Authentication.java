@@ -9,13 +9,22 @@ import akka.actor.ActorSystem;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
+import com.github.markserrano.jsonquery.jpa.enumeration.OrderEnum;
+import com.github.markserrano.jsonquery.jpa.filter.JsonFilter;
+import com.github.markserrano.jsonquery.jpa.response.JqgridResponse;
+import com.github.markserrano.jsonquery.jpa.service.IFilterService;
+import com.github.markserrano.jsonquery.jpa.specifier.Order;
+import com.github.markserrano.jsonquery.jpa.util.QueryUtil;
 import com.google.common.collect.ImmutableMap;
+import com.mysema.query.BooleanBuilder;
+import com.mysema.query.types.OrderSpecifier;
 import com.portal.commons.models.AppUser;
-import com.portal.commons.events.Email;
+import com.portal.commons.events.Sms;
 import com.portal.commons.exceptions.InvalidCredentialsException;
 import com.portal.commons.exceptions.ResourceAlreadtExist;
 import com.portal.commons.exceptions.ResourceNotFound;
 import com.portal.commons.models.GeneralMapper;
+import com.portal.commons.models.SmsLog;
 import com.portal.commons.util.CycleAvoidingMappingContext;
 import com.portal.commons.util.EnvironMentVariables;
 import com.portal.commons.util.MyObjectMapper;
@@ -24,6 +33,7 @@ import com.portal.configuration.IConfiguration.Config;
 import com.portal.configuration.IMessageTemplate;
 import com.portal.entities.JpaAppUser;
 import com.portal.entities.JpaPinRequest;
+import com.portal.entities.JpaSmsLog;
 import com.portal.entities.QJpaPinRequest;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.io.IOException;
@@ -35,17 +45,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import javax.inject.Inject;
+import mock.springframework.data.domain.Page;
+import mock.springframework.data.domain.PageRequest;
+import mock.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.javatuples.Pair;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import play.api.libs.ws.WSClient;
 import play.db.jpa.JPAApi;
-
-import play.mvc.Http;
+import scala.concurrent.duration.Duration;
 
 /**
  *
@@ -75,6 +88,9 @@ public class Authentication {
     @Inject
     private IConfiguration configuration;
 
+    @Inject
+    IFilterService filterService;
+
     private static JWTSigner signer;
     private static JWTVerifier verifier;
 
@@ -83,6 +99,26 @@ public class Authentication {
         userMap.put("username", "Anonymous");
         userMap.put("roleId", "none");
         return getSigner().sign(userMap, new JWTSigner.Options().setIssuedAt(true).setExpirySeconds(3600));
+    }
+
+    public JqgridResponse<SmsLog> getSMsLog(Boolean search, String filters,
+            Integer page, Integer rows, String sidx, String sord) {
+        filters = filters == null || filters == "" || !search ? QueryUtil.INIT_FILTER : filters;
+        Order order = new Order(JpaSmsLog.class);
+        OrderSpecifier<?> orderSpecifier = order.by(sidx, OrderEnum.getEnum(sord));
+        JsonFilter jsonFilter = new JsonFilter(filters);
+        BooleanBuilder build = filterService.getJsonBooleanBuilder(JpaSmsLog.class).build(jsonFilter);
+        if (rows == null) {
+            rows = filterService.count(build, JpaSmsLog.class, orderSpecifier).intValue();
+        }
+        Pageable pageable = new PageRequest(page >= 1 ? page - 1 : 0, rows > 0 ? rows : 1);
+        Page<JpaSmsLog> results = filterService.readAndCount(build, pageable, JpaSmsLog.class, orderSpecifier);
+        JqgridResponse<SmsLog> response = new JqgridResponse<>();
+        response.setRows(results.getContent().stream().map(GeneralMapper.INSTANCE::jpaSmsLogToSmsLog).collect(Collectors.toList()));
+        response.setRecords(Long.toString(results.getTotalElements()));
+        response.setTotal(Integer.toString(results.getTotalPages()));
+        response.setPage(Integer.toString(results.getNumber() + 1));
+        return response;
     }
 
     public String login(String username, String password, boolean expire) throws InvalidCredentialsException, VerifyError {
@@ -166,18 +202,9 @@ public class Authentication {
     public void startPasswordRecovery(String appUserId) throws ResourceNotFound {
         String pin = RandomStringUtils.randomNumeric(8);
         JpaAppUser jpaAppUser = appUserRepository.getJpaAppUser(appUserId);
-        String name = "";
-        if (jpaAppUser.getFirstName() != null && !"".equals(jpaAppUser.getFirstName())) {
-            name = jpaAppUser.getFirstName();
-        }
-        if (jpaAppUser.getLastName() != null && !"".equals(jpaAppUser.getLastName())) {
-            name += " " + jpaAppUser.getLastName();
-        }
-        name = name.trim();
-        if ("".equals(name)) {
-            name = appUserId;
-        }
-        String msgTemplate = messageTemplate.getMessageTemplate(IMessageTemplate.MessageType.MOBILE_PIN_RESET).getMailTemplate();
+        String name = AppUser.getJpaName(jpaAppUser);
+
+        String msgTemplate = messageTemplate.getMessageTemplate(IMessageTemplate.MessageType.PIN_RESET).getSmsTemplate();
         String pinExpirySeconds = configuration.getConfiguration(IConfiguration.Config.PIN_EXPIRY_SECONDS);
         Date now = new Date();
         DateTime dateTime = new DateTime(now);
@@ -188,8 +215,9 @@ public class Authentication {
         jPAApi.em().persist(jpaPinRequest);
 
         String body = messageTemplate.parseMessageTemplate(msgTemplate, ImmutableMap.of("expiryDate", new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(expiryDate), "pin", pin, "name", name));
-        Email email = new Email(appUserId, name, "Pin Reset", Email.DEFAULT_SENDER_EMAIL, body);
-        actorSystem.eventStream().publish(email);
+        Sms sms = new Sms(jpaAppUser.getMobileNumber(), "TRCN", body);
+        actorSystem.scheduler().scheduleOnce(Duration.create(1, TimeUnit.SECONDS),
+                () -> actorSystem.eventStream().publish(sms), actorSystem.dispatcher());
     }
 
     public void finalizePasswordRecovery(String pin, String newPassword) throws ResourceNotFound, IllegalStateException, NoSuchAlgorithmException, InvalidKeySpecException {

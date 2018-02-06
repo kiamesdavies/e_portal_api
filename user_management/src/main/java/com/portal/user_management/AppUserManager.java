@@ -74,7 +74,9 @@ public class AppUserManager {
 
         }
 
-        appUser.setAppUserId(java.util.UUID.randomUUID().toString());
+        if(StringUtils.isBlank(appUser.getAppUserId())){
+            appUser.setAppUserId(java.util.UUID.randomUUID().toString());
+        }
         appUser.setCreatedBy(getContextAppUser().orElse(new AppUser("System")).getAppUserId());
         appUser.setDateCreated(new Date());
         appUser.setActive(Boolean.TRUE);

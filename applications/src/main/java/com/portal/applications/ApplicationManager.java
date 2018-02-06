@@ -11,6 +11,7 @@ import com.github.markserrano.jsonquery.jpa.response.JqgridResponse;
 import com.github.markserrano.jsonquery.jpa.service.IFilterService;
 import com.github.markserrano.jsonquery.jpa.specifier.Order;
 import com.github.markserrano.jsonquery.jpa.util.QueryUtil;
+import com.google.common.collect.ImmutableMap;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.types.OrderSpecifier;
 import com.portal.commons.exceptions.ResourceNotFound;
@@ -22,21 +23,28 @@ import com.portal.commons.models.FormVersion;
 import com.portal.commons.models.GeneralMapper;
 import com.portal.commons.util.CycleAvoidingMappingContext;
 import com.portal.commons.util.EnvironMentVariables;
+import com.portal.entities.JpaApplicationCount;
 import com.portal.entities.JpaApplicationData;
 import com.portal.entities.JpaApplicationSummary;
 import com.portal.entities.JpaFormVersion;
+import com.portal.entities.QJpaApplicationCount;
+import com.portal.entities.QJpaApplicationDashboard;
 import com.portal.entities.QJpaApplicationData;
 import com.portal.entities.QJpaApplicationSummary;
 import com.portal.entities.QJpaForm;
 import com.portal.entities.QJpaFormVersion;
 import com.portal.user_management.AppUserManager;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +73,24 @@ public class ApplicationManager {
 
     @Inject
     AppUserManager appUserManager;
+
+    public HashMap<String, Object> getDashboard() {
+        QJpaApplicationDashboard qjad = QJpaApplicationDashboard.jpaApplicationDashboard;
+        QJpaApplicationCount qjac = QJpaApplicationCount.jpaApplicationCount;
+        QJpaApplicationSummary qjas = QJpaApplicationSummary.jpaApplicationSummary;
+        JpaApplicationCount fetchFirst = new JPAQueryFactory(jPAApi.em()).selectFrom(qjac).fetchFirst();
+        HashMap<String, Object> map = new HashMap<>();
+        if (fetchFirst != null) {
+            map.put("pie", GeneralMapper.INSTANCE.jpaApplicationCountToApplicationCount(fetchFirst));
+        }
+        map.put("bar", new JPAQueryFactory(jPAApi.em()).selectFrom(qjad).fetch().stream().map(GeneralMapper.INSTANCE::jpaApplicationDashboardToApplicationDashboard).collect(Collectors.toList()));
+
+        List<Tuple> fetch = new JPAQueryFactory(jPAApi.em()).from(qjas).groupBy(qjas.category).select(qjas.category, qjas.category.count()).fetch();
+
+        map.put("categories", fetch.stream().map(g -> ImmutableMap.of("category", Objects.toString(g.get(0, String.class), "No Category"), "count", g.get(1, Long.class))).collect(Collectors.toList()));
+
+        return map;
+    }
 
     public ApplicationSummary getApplicationSummary(String appUserId) throws ResourceNotFound {
         QJpaApplicationSummary qas = QJpaApplicationSummary.jpaApplicationSummary;

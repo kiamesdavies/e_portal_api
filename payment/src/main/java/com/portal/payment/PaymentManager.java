@@ -5,6 +5,7 @@
  */
 package com.portal.payment;
 
+import akka.actor.ActorSystem;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.markserrano.jsonquery.jpa.enumeration.OrderEnum;
 import com.github.markserrano.jsonquery.jpa.filter.JsonFilter;
@@ -17,27 +18,35 @@ import com.mysema.query.BooleanBuilder;
 import com.mysema.query.types.OrderSpecifier;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.portal.applications.ApplicationManager;
+import com.portal.commons.events.Sms;
 import com.portal.commons.exceptions.ResourceNotFound;
 import com.portal.commons.models.AppUser;
 import com.portal.commons.models.ApplicationSummary;
 import com.portal.commons.models.Category;
 import com.portal.commons.models.GeneralMapper;
 import com.portal.commons.models.ManualTransaction;
+import com.portal.commons.models.ManualTransactionView;
 import com.portal.commons.models.OnlineTransaction;
+import com.portal.commons.models.OnlineTransactionView;
 import com.portal.commons.models.Payment;
 import com.portal.commons.util.CycleAvoidingMappingContext;
 import com.portal.commons.util.EnvironMentVariables;
 import com.portal.commons.util.MyObjectMapper;
 import com.portal.configuration.IMessageTemplate;
 import com.portal.entities.JpaAppUser;
+import com.portal.entities.JpaApplicationSummary;
 import com.portal.entities.JpaCategory;
 import com.portal.entities.JpaManualTransaction;
+import com.portal.entities.JpaManualTransactionView;
 import com.portal.entities.JpaOnliePaymentTransactionRawReponse;
 import com.portal.entities.JpaOnlineTransaction;
+import com.portal.entities.JpaOnlineTransactionView;
 import com.portal.entities.JpaPayment;
+import com.portal.entities.QJpaAppUser;
 import com.portal.entities.QJpaApplicationSummary;
 import com.portal.entities.QJpaOnlineTransaction;
 import com.portal.entities.QJpaCategory;
+import com.portal.entities.QJpaManualTransaction;
 import com.portal.entities.QJpaPayment;
 import com.portal.user_management.AppUserManager;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -57,6 +66,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,6 +80,7 @@ import org.apache.commons.lang3.StringUtils;
 import play.db.jpa.JPAApi;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSResponse;
+import scala.concurrent.duration.Duration;
 
 /**
  *
@@ -77,6 +88,8 @@ import play.libs.ws.WSResponse;
  */
 public class PaymentManager {
 
+    @Inject
+    private ActorSystem actorSystem;
     @Inject
     JPAApi jPAApi;
 
@@ -195,6 +208,7 @@ public class PaymentManager {
     public List<Payment> getAllExpiredPayment(LocalDate expiryDate) {
         QJpaApplicationSummary qjas = QJpaApplicationSummary.jpaApplicationSummary;
         QJpaPayment qjp = QJpaPayment.jpaPayment;
+        QJpaAppUser qjau = QJpaAppUser.jpaAppUser;
         LocalTime midnight = LocalTime.MIDNIGHT;
         LocalDateTime todayMidnight = LocalDateTime.of(expiryDate, midnight);
         LocalDateTime tomorrowMidnight = todayMidnight.plusDays(1);
@@ -202,23 +216,23 @@ public class PaymentManager {
         Date tomorrowMidnightDate = Date.from(tomorrowMidnight.atZone(ZoneId.of("UTC")).toInstant());
         List<String> paymentIds = new JPAQueryFactory(jPAApi.em()).from(qjas).select(qjas.paymentId).where(qjas.datePaid.isNotNull(), qjas.datePaid.before(tomorrowMidnightDate), qjas.datePaid.after(todayMidnightDate)).fetch();
 
-        return new JPAQueryFactory(jPAApi.em()).selectFrom(qjp).where(qjp.paymentId.in(paymentIds)).fetch().stream().map(f -> GeneralMapper.INSTANCE.jpaPaymentToGeneratedPayment(f, new CycleAvoidingMappingContext())).collect(Collectors.toList());
+        return new JPAQueryFactory(jPAApi.em()).selectFrom(qjp).join(qjp.appUserId, qjau).where(qjp.paymentId.in(paymentIds)).fetch().stream().map(f -> GeneralMapper.INSTANCE.jpaPaymentToGeneratedPayment(f, new CycleAvoidingMappingContext())).collect(Collectors.toList());
     }
 
-    public JqgridResponse<OnlineTransaction> getOnlineTransactions(Boolean search, String filters,
+    public JqgridResponse<OnlineTransactionView> getOnlineTransactions(Boolean search, String filters,
             Integer page, Integer rows, String sidx, String sord) {
         filters = filters == null || filters == "" || !search ? QueryUtil.INIT_FILTER : filters;
-        Order order = new Order(JpaOnlineTransaction.class);
+        Order order = new Order(JpaOnlineTransactionView.class);
         OrderSpecifier<?> orderSpecifier = order.by(sidx, OrderEnum.getEnum(sord));
         JsonFilter jsonFilter = new JsonFilter(filters);
-        BooleanBuilder build = filterService.getJsonBooleanBuilder(JpaOnlineTransaction.class).build(jsonFilter);
+        BooleanBuilder build = filterService.getJsonBooleanBuilder(JpaOnlineTransactionView.class).build(jsonFilter);
         if (rows == null) {
-            rows = filterService.count(build, JpaOnlineTransaction.class, orderSpecifier).intValue();
+            rows = filterService.count(build, JpaOnlineTransactionView.class, orderSpecifier).intValue();
         }
         Pageable pageable = new PageRequest(page >= 1 ? page - 1 : 0, rows > 0 ? rows : 1);
-        Page<JpaOnlineTransaction> results = filterService.readAndCount(build, pageable, JpaOnlineTransaction.class, orderSpecifier);
-        JqgridResponse<OnlineTransaction> response = new JqgridResponse<>();
-        response.setRows(results.getContent().stream().map(f -> GeneralMapper.INSTANCE.jpaOnlineTransactionToGeneratedOnlineTransaction(f, new CycleAvoidingMappingContext())).collect(Collectors.toList()));
+        Page<JpaOnlineTransactionView> results = filterService.readAndCount(build, pageable, JpaOnlineTransactionView.class, orderSpecifier);
+        JqgridResponse<OnlineTransactionView> response = new JqgridResponse<>();
+        response.setRows(results.getContent().stream().map(GeneralMapper.INSTANCE::jpaOnlineTransactionViewToOnlineTransactionView).collect(Collectors.toList()));
         response.setRecords(Long.toString(results.getTotalElements()));
         response.setTotal(Integer.toString(results.getTotalPages()));
         response.setPage(Integer.toString(results.getNumber() + 1));
@@ -352,26 +366,26 @@ public class PaymentManager {
         });
     }
 
-    public JqgridResponse<ManualTransaction> getManualTransactions(Boolean search, String filters,
+    public JqgridResponse<ManualTransactionView> getManualTransactions(Boolean search, String filters,
             Integer page, Integer rows, String sidx, String sord) {
         filters = filters == null || filters == "" || !search ? QueryUtil.INIT_FILTER : filters;
-        Order order = new Order(JpaManualTransaction.class);
+        Order order = new Order(JpaManualTransactionView.class);
         OrderSpecifier<?> orderSpecifier = order.by(sidx, OrderEnum.getEnum(sord));
         JsonFilter jsonFilter = new JsonFilter(filters);
-        BooleanBuilder build = filterService.getJsonBooleanBuilder(JpaManualTransaction.class).build(jsonFilter);
+        BooleanBuilder build = filterService.getJsonBooleanBuilder(JpaManualTransactionView.class).build(jsonFilter);
         if (rows == null) {
-            rows = filterService.count(build, JpaManualTransaction.class, orderSpecifier).intValue();
+            rows = filterService.count(build, JpaManualTransactionView.class, orderSpecifier).intValue();
         }
         Pageable pageable = new PageRequest(page >= 1 ? page - 1 : 0, rows > 0 ? rows : 1);
-        Page<JpaManualTransaction> results = filterService.readAndCount(build, pageable, JpaOnlineTransaction.class, orderSpecifier);
-        JqgridResponse<ManualTransaction> response = new JqgridResponse<>();
-        response.setRows(results.getContent().stream().map(f -> GeneralMapper.INSTANCE.jpaManualTransactionToGeneratedManualTransaction(f, new CycleAvoidingMappingContext())).collect(Collectors.toList()));
+        Page<JpaManualTransactionView> results = filterService.readAndCount(build, pageable, JpaManualTransactionView.class, orderSpecifier);
+        JqgridResponse<ManualTransactionView> response = new JqgridResponse<>();
+        response.setRows(results.getContent().stream().map(GeneralMapper.INSTANCE::jpaManualTransactionViewToManualTransactionView).collect(Collectors.toList()));
         response.setRecords(Long.toString(results.getTotalElements()));
         response.setTotal(Integer.toString(results.getTotalPages()));
         response.setPage(Integer.toString(results.getNumber() + 1));
         return response;
     }
-    private static final SimpleDateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat DATEFORMAT = new SimpleDateFormat("dd/MM/yyyy");
     private static final Function<String, Date> STRING_DATE_TO_DATE = (s) -> {
         if (StringUtils.isNoneBlank(s)) {
             try {
@@ -386,15 +400,27 @@ public class PaymentManager {
 
         teacherRegNumber = teacherRegNumber.trim();
         amountPaid = amountPaid.trim();
+        bankTeller = bankTeller.trim();
+        QJpaManualTransaction qjmt = QJpaManualTransaction.jpaManualTransaction;
+        if (StringUtils.isNoneBlank(bankTeller)) {
+            String fetchFirst = new JPAQueryFactory(jPAApi.em()).from(qjmt).select(qjmt.bankTeller).where(qjmt.bankTeller.equalsIgnoreCase(bankTeller)).fetchFirst();
+            //transaction exists
+            if (StringUtils.isNoneBlank(fetchFirst)) {
+                return;
+            }
+        }
+
         QJpaApplicationSummary qjas = QJpaApplicationSummary.jpaApplicationSummary;
-        String appUserId = new JPAQueryFactory(jPAApi.em()).from(qjas).select(qjas.appUserId).where(qjas.userName.equalsIgnoreCase(teacherRegNumber)).fetchOne();
+        JpaApplicationSummary applicationSummary = new JPAQueryFactory(jPAApi.em()).selectFrom(qjas).where(qjas.userName.equalsIgnoreCase(teacherRegNumber)).fetchOne();
 
         JpaManualTransaction manualTransaction = new JpaManualTransaction(java.util.UUID.randomUUID().toString(), teacherRegNumber, new Date(), false);
         manualTransaction.setCreatedByAppUserId(new JpaAppUser(byAppUserId));
         manualTransaction.setCreditedAccount(false);
-        if (StringUtils.isNoneBlank(appUserId)) {
+        manualTransaction.setBankName(bankName);
+        manualTransaction.setBankTeller(bankTeller);
+        if (StringUtils.isNoneBlank(applicationSummary.getAppUserId())) {
             try {
-                JpaPayment payment = this.initializePaymentJpa(appUserId, "manual", bankName, bankTeller);
+                JpaPayment payment = this.initializePaymentJpa(applicationSummary.getAppUserId(), "manual", bankName, bankTeller);
                 manualTransaction.setPaymentId(payment);
                 if (Double.valueOf(amountPaid) >= payment.getAmountToPay()) {
                     Date datePaid = STRING_DATE_TO_DATE.apply(datePaidString);
@@ -411,10 +437,17 @@ public class PaymentManager {
                     manualTransaction.setDateClaimed(new Date());
                     manualTransaction.setCreditedAccount(true);
                     manualTransaction.setAmountPaid(Double.valueOf(amountPaid));
-
+                    manualTransaction.setDatePaid(new Date());
                     jPAApi.em().merge(payment);
+
+                    String msgTemplate = messageTemplate.getMessageTemplate(IMessageTemplate.MessageType.PAYMENT_CLAIMED).getSmsTemplate();
+                    String name = String.format("%s %s", Objects.toString(applicationSummary.getFirstName(), ""), Objects.toString(applicationSummary.getSurName(), ""));
+                    String body = messageTemplate.parseMessageTemplate(msgTemplate, ImmutableMap.of("name", name.trim(), "teacherRegNumber", applicationSummary.getUserName()));
+                    Sms sms = new Sms(applicationSummary.getMobileNumber(), "TRCN", body);
+                    actorSystem.scheduler().scheduleOnce(Duration.create(1, TimeUnit.SECONDS),
+                            () -> actorSystem.eventStream().publish(sms), actorSystem.dispatcher());
                 } else {
-                    manualTransaction.setProcessingMessage(String.format("Amoun to pay %f is less than amount paid %s", payment.getAmountToPay(), amountPaid));
+                    manualTransaction.setProcessingMessage(String.format("Amount to pay %f is less than amount paid %s", payment.getAmountToPay(), amountPaid));
                 }
             } catch (ResourceNotFound ex) {
                 manualTransaction.setProcessingMessage(String.format("Could not initialize payment due to %s ", ex.getMessage()));
@@ -437,7 +470,7 @@ public class PaymentManager {
                 if (StringUtils.isNoneBlank(mostRecentPaymentJpa.get().getCertificatePath()) && new File(EnvironMentVariables.STORAGE_PATH + mostRecentPaymentJpa.get().getCertificatePath()).exists()) {
                     return EnvironMentVariables.STORAGE_PATH + mostRecentPaymentJpa.get().getCertificatePath();
                 }
-                String certificatePath = MONTH_DATEFORMAT.format(new Date()) + "/" + RandomStringUtils.randomAlphanumeric(10) + ".pdf";
+                String certificatePath = MONTH_DATEFORMAT.format(new Date()) + "/" + RandomStringUtils.randomAlphanumeric(30) + ".pdf";
                 String fullPath = EnvironMentVariables.STORAGE_PATH + certificatePath;
                 new File(fullPath).getParentFile().mkdirs();
                 LocalDateTime localDateTime = LocalDateTime.ofInstant(mostRecentPaymentJpa.get().getDatePaid().toInstant(), ZoneId.of("UTC")).plusMonths(2);

@@ -13,9 +13,9 @@ import java.util.Optional;
  */
 public class EnvironMentVariables {
 
-    public static final String API_SERVER_URL = Optional.ofNullable(System.getenv("API_SERVER_URL")).orElse("http://192.168.8.101:9000");
+    public static final String API_SERVER_URL = Optional.ofNullable(System.getenv("API_SERVER_URL")).orElse("http://192.168.8.100:9000");
     public static final String API_MAIN_DOMAIN = Optional.ofNullable(System.getenv("API_MAIN_DOMAIN")).orElse("localhost");
-    public static final String APP_SERVER_URL = Optional.ofNullable(System.getenv("APP_SERVER_URL")).orElse("http://localhost:9090");
+    public static final String APP_SERVER_URL = Optional.ofNullable(System.getenv("APP_SERVER_URL")).orElse("http://localhost:9090/main.html");
 //http://enketo.tattara.com/j
 
     public static final String ENKETO_SERVER_URL = Optional.ofNullable(System.getenv("ENKETO_SERVER_URL")).orElse("http://localhost:8097");

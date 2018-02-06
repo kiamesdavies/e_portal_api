@@ -3,16 +3,21 @@ package com.portal.commons.models;
 import com.portal.commons.util.CycleAvoidingMappingContext;
 import com.portal.entities.JpaAppConfig;
 import com.portal.entities.JpaAppUser;
+import com.portal.entities.JpaApplicationCount;
+import com.portal.entities.JpaApplicationDashboard;
 import com.portal.entities.JpaApplicationData;
 import com.portal.entities.JpaApplicationSummary;
 import com.portal.entities.JpaCategory;
 import com.portal.entities.JpaForm;
 import com.portal.entities.JpaFormVersion;
 import com.portal.entities.JpaManualTransaction;
+import com.portal.entities.JpaManualTransactionView;
 import com.portal.entities.JpaMessageTemplate;
 import com.portal.entities.JpaOnliePaymentTransactionRawReponse;
 import com.portal.entities.JpaOnlineTransaction;
+import com.portal.entities.JpaOnlineTransactionView;
 import com.portal.entities.JpaPayment;
+import com.portal.entities.JpaSmsLog;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -22,6 +27,16 @@ import org.mapstruct.factory.Mappers;
 public interface GeneralMapper {
 
     GeneralMapper INSTANCE = Mappers.getMapper(GeneralMapper.class);
+
+    SmsLog jpaSmsLogToSmsLog(JpaSmsLog jpaSmsLog);
+
+    ManualTransactionView jpaManualTransactionViewToManualTransactionView(JpaManualTransactionView jmtv);
+
+    OnlineTransactionView jpaOnlineTransactionViewToOnlineTransactionView(JpaOnlineTransactionView jotv);
+
+    ApplicationDashboard jpaApplicationDashboardToApplicationDashboard(JpaApplicationDashboard applicationDashboard);
+
+    ApplicationCount jpaApplicationCountToApplicationCount(JpaApplicationCount applicationCount);
 
     Category jpaCategoryToCategory(JpaCategory category, @Context CycleAvoidingMappingContext context);
 
@@ -37,11 +52,9 @@ public interface GeneralMapper {
 
     MessageTemplate jpaMessageTemplateToGeneratedMessageTemplate(JpaMessageTemplate entity);
 
-    
     JpaAppUser generatedAppUserToJpaAppUser(AppUser model,
             @Context CycleAvoidingMappingContext context);
 
-   
     AppUser jpaAppUserToGeneratedAppUser(JpaAppUser entity,
             @Context CycleAvoidingMappingContext context);
 

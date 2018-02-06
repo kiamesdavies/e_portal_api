@@ -5,14 +5,22 @@
  */
 package com.portal.commons.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import java.security.InvalidKeyException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -25,22 +33,37 @@ import org.apache.commons.lang3.RandomStringUtils;
  */
 public class Utility {
 
+    public static List<Map<String, String>> read(File file) throws JsonProcessingException, IOException {
+        List<Map<String, String>> response = new LinkedList<>();
+        CsvMapper mapper = new CsvMapper();
+        CsvSchema schema = CsvSchema.emptySchema().withHeader();
+        MappingIterator<Map<String, String>> iterator = mapper.reader(Map.class)
+                .with(schema)
+                .readValues(file);
+        while (iterator.hasNext()) {
+            response.add(iterator.next());
+        }
+        return response;
+    }
+
     /**
-     * getRandomNumberInRange(5, 10), this will generates a random integer between 5 (inclusive) and 10 (inclusive).
+     * getRandomNumberInRange(5, 10), this will generates a random integer
+     * between 5 (inclusive) and 10 (inclusive).
+     *
      * @param min
      * @param max
-     * @return 
+     * @return
      */
     public static int getRandomNumberInRange(int min, int max) {
 
-	if (min >= max) {
-		throw new IllegalArgumentException("max must be greater than min");
-	}
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
 
-	Random r = new Random();
-	return r.nextInt((max - min) + 1) + min;
-}
-    
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
+    }
+
     public static String GenerateRandomNumber(int charLength) {
         return RandomStringUtils.randomNumeric(charLength);
     }

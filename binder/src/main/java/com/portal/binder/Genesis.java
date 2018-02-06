@@ -23,24 +23,21 @@ import scala.concurrent.duration.Duration;
 public class Genesis {
 
     @Inject
-    public Genesis(ActorSystem actorSystem
-    // , @Named("jackOfAllTrade") ActorRef jackActorRef
-    //, @Named("invoiceGenerator") ActorRef invoiceGeneratorActorRef
+    public Genesis(ActorSystem actorSystem, @Named("jackOfAllTrade") ActorRef jackActorRef, @Named("paymentGenerator") ActorRef paymentGeneratorActorRef
     ) {
 
-       // actorSystem.eventStream().subscribe(jackActorRef, GenericEvents.class);
+        actorSystem.eventStream().subscribe(jackActorRef, GenericEvents.class);
+        QuartzSchedulerExtension quartzSchedulerExtension = QuartzSchedulerExtension.get(actorSystem);
 
-//        QuartzSchedulerExtension quartzSchedulerExtension = QuartzSchedulerExtension.get(actorSystem);
-//
-//        Date schedule = quartzSchedulerExtension.schedule("Every7AM", invoiceGeneratorActorRef, "GenerateInvoice");
-//
-//        play.Logger.info("Quartz Schedule on {}", schedule);
-//
-//        actorSystem.scheduler().scheduleOnce(Duration.create(30, TimeUnit.MINUTES),
-//                () -> {
-//                    System.out.println("Notifying invoce generator on " + new Date());
-//                    invoiceGeneratorActorRef.tell("GenerateInvoice", ActorRef.noSender());
-//                }, actorSystem.dispatcher());
+        Date schedule = quartzSchedulerExtension.schedule("Every7AM", paymentGeneratorActorRef, "InitializePayment");
+
+        play.Logger.info("Quartz Schedule on {}", schedule);
+
+        actorSystem.scheduler().scheduleOnce(Duration.create(30, TimeUnit.MINUTES),
+                () -> {
+                    System.out.println("Notifying payment initialization on " + new Date());
+                    paymentGeneratorActorRef.tell("paymentGeneratorActorRef", ActorRef.noSender());
+                }, actorSystem.dispatcher());
     }
 
 }

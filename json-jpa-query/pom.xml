@@ -9,6 +9,12 @@
     </parent>
     <artifactId>json-jpa-query</artifactId>
     <packaging>jar</packaging>
-    
-    
+    <dependencies>
+        <dependency>
+            <groupId>com.portal</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0.0</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
 </project>

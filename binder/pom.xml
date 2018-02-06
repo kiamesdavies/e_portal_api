@@ -29,6 +29,11 @@
             <artifactId>applications</artifactId>
             <version>${project.version}</version>
         </dependency>
+         <dependency>
+            <groupId>com.portal</groupId>
+            <artifactId>actors</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.portal</groupId>
             <artifactId>entities</artifactId>

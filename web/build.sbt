@@ -27,11 +27,11 @@ libraryDependencies ++= Seq(
     "org.flywaydb" %% "flyway-play" % "3.0.1",
     "com.enragedginger" %% "akka-quartz-scheduler" % "1.6.0-akka-2.4.x",
     "jaxen" % "jaxen" % "1.1.6",
-    "com.opencsv" % "opencsv" % "3.8",
     "org.jdom" % "jdom2" % "2.0.6",
-
+    "com.opencsv" % "opencsv" % "3.9",
     "com.openhtmltopdf" % "openhtmltopdf-core" % "0.0.1-RC12",
     "com.openhtmltopdf" % "openhtmltopdf-pdfbox" % "0.0.1-RC12",
+    "com.fasterxml.jackson.dataformat" % "jackson-dataformat-csv" % "2.6.3",
     cache,
     filters,
     javaJpa

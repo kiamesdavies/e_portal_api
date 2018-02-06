@@ -29,6 +29,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ApplicationSummary.findAll", query = "SELECT a FROM JpaApplicationSummary a")})
 public class JpaApplicationSummary implements Serializable {
 
+    @Column(name = "certificates")
+    private String certificates;
+    @Column(name = "application_date_created")
+    private String applicationDateCreated;
     @Column(name = "payment_id")
     private String paymentId;
     @Size(max = 2147483647)
@@ -371,4 +375,21 @@ public class JpaApplicationSummary implements Serializable {
         this.paymentId = paymentId;
     }
 
+    public String getApplicationDateCreated() {
+        return applicationDateCreated;
+    }
+
+    public void setApplicationDateCreated(String applicationDateCreated) {
+        this.applicationDateCreated = applicationDateCreated;
+    }
+
+    public String getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(String certificates) {
+        this.certificates = certificates;
+    }
+
+    
 }

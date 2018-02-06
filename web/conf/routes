@@ -4,7 +4,12 @@
 
 # An example controller showing a sample home page
 
+GET        /sms_logs/                                                               controllers.AuthenticationController.getSmsLog(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc",export:Boolean ?= false)
 
+
+GET        /dashboard/                                                              controllers.ApplicationController.getDashboard()
+
+GET        /manual_template/                                                        controllers.ApplicationController.getManualTemplate()
 
 GET        /remitta/instant_callback/                                               controllers.RemittaController.completeInstantOnlineTransaction(RRR:String, orderId:String)
 
@@ -14,15 +19,17 @@ POST       /remitta/batch_callback/                                             
 
 GET        /remitta/initialize_payment/:appUserId/                                  controllers.RemittaController.initializePayment(appUserId: String)
 
-GET        /online_transactions/                                                    controllers.PaymentController.getOnlineTransactions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc")
+GET        /online_transactions/                                                    controllers.PaymentController.getOnlineTransactions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc",export:Boolean ?= false)
 
-GET        /manual_transactions/                                                    controllers.PaymentController.getManualTransactions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc")
+GET        /manual_transactions/                                                    controllers.PaymentController.getManualTransactions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc",export:Boolean ?= false)
 
 
 GET        /online_transactions/:onlineTransaction/                                 controllers.PaymentController.getOnlineTransaction(onlineTransaction: String)
 GET        /online_transactions/:onlineTransaction                                  controllers.PaymentController.getOnlineTransaction(onlineTransaction: String)
 
 PUT        /online_transactions/:getOnlineTransaction/retry/                        controllers.PaymentController.retryTransaction(getOnlineTransaction: String)
+
+POST       /manual_transactions/process/                                            controllers.PaymentController.processManualTransactions()
 
 
 GET        /auth/username_availability/                                             controllers.AuthenticationController.isUsernameAvailable(username: String)
@@ -36,12 +43,12 @@ POST       /users/                                                              
 PUT        /users/:appUserId/                                                       controllers.AppUserController.editAppUser(appUserId:String)
 DELETE     /users/:appUserId/                                                       controllers.AppUserController.deleteAppUser(appUserId:String)
 PUT        /users/:appUserId/change_password/                                       controllers.AppUserController.changePassword(appUserId:String)
-GET        /users/                                                                  controllers.AppUserController.getAppUsers(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx : String,sord : String)
+GET        /users/                                                                  controllers.AppUserController.getAppUsers(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx : String,sord : String,export:Boolean ?= false)
 
 
-GET        /applications/                                                           controllers.ApplicationController.getApplications(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx : String,sord ?= "desc")
+GET        /applications/                                                           controllers.ApplicationController.getApplications(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx : String,sord ?= "desc",export:Boolean ?= false)
 
-GET        /form_versions/                                                          controllers.ApplicationController.getFormVersions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc")
+GET        /form_versions/                                                          controllers.ApplicationController.getFormVersions(_search:Boolean ?= false,filters ?= null,page: Int ?= 1,rows: java.lang.Integer ?= null,sidx ?="dateCreated",sord ?= "desc",export:Boolean ?= false)
 
 DELETE     /form_versions/:form_version_id/                                         controllers.ApplicationController.deleteFormVersion(form_version_id:String)
 
@@ -51,8 +58,8 @@ GET        /applications/:application_id                                        
 POST       /forms/:form_id/                                                         controllers.ApplicationController.addFormVersion(form_id:String)
 GET        /users/:appUserId/certificate/                                           controllers.ApplicationController.getCertificate(appUserId:String)
 
-GET        /forms/:formId/offline/static/                                           controllers.ApplicationController.staticUrl(formId : String,returnUrl ?= null, single:Boolean ?= false)
-GET        /forms/:formId/form_versions/offline/                                    controllers.ApplicationController.webForm(formId : String)
+GET        /forms/:formId/offline/static/                                           controllers.ApplicationController.staticUrl(formId : String,returnUrl ?= null, single:Boolean ?= false,appUserId ?= null)
+#GET        /forms/:formId/form_versions/offline/                                    controllers.ApplicationController.webForm(formId : String)
 GET        /forms/:formId/form_versions/:formVersionId/offline_edit/:formDataId/    controllers.ApplicationController.webFormForEdit(formId : String,formVersionId : String,formDataId : String, returnUrl ?= null)
 
 GET        /formList                                                                controllers.ApplicationController.formlist(formID : String)

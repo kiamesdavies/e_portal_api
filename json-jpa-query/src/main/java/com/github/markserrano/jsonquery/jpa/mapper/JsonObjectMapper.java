@@ -13,37 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.github.markserrano.jsonquery.jpa.mapper;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import com.github.markserrano.jsonquery.jpa.filter.JsonFilter;
+import com.portal.commons.util.MyObjectMapper;
 
 /**
  * Maps a JSON query {@link String} to a {@link JsonFilter} instance
- * 
+ *
  * @param jsonString A JSON string
- * 
+ *
  * @author Mark Anthony L. Serrano
  */
 public class JsonObjectMapper {
 
-    
-	
-	public static JsonFilter map(String jsonString) {
-		
-    	if (jsonString != null) {
-        	ObjectMapper mapper = new ObjectMapper();
-        	
-        	try {
-				return mapper.readValue(jsonString, JsonFilter.class);
-        	} catch (Exception e) {
-				throw new RuntimeException (e);
-			}
-    	}
-    	
-		return null;
-	}
+    public static JsonFilter map(String jsonString) {
+
+        if (jsonString != null) {
+            MyObjectMapper mapper = new MyObjectMapper();
+
+            try {
+                return mapper.readValue(jsonString, JsonFilter.class);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return null;
+    }
 }
