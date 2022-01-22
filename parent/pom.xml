@@ -11,7 +11,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <dbh2.version>1.4.191</dbh2.version>
+        <dbh2.version>2.1.210</dbh2.version>
         <org.mapstruct.version>1.2.0.Beta2</org.mapstruct.version>
 	
     </properties>
